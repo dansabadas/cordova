@@ -1,0 +1,8 @@
+[{
+    "id": 1,
+    "missionsUrl": ["data/missions.json"]
+},
+{
+    "id": 2,
+    "missionsUrl": []
+}]

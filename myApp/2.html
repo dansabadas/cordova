@@ -172,5 +172,120 @@
                 promise
                     .then(val => log("Success chapter 6: " + val))
                     .catch(e => log("Error chapter 6: " + e));
+
+            let report = console.log;
+            function Ninja() {
+                let _skillLevel = 0;
+                Object.defineProperty(this, 'skillLevel', {
+                    get: () => {
+                        report("The get method is called");
+                        return _skillLevel;
+                    },
+                    set: value => {
+                        report("The set method is called");
+                        _skillLevel = value;
+                    }
+                });
+            }
+
+            const ninja = new Ninja();
+            log(typeof ninja._skillLevel === "undefined", "We cannot access a 'private' property");
+            log(ninja.skillLevel === 0, "The getter works fine!");
+            ninja.skillLevel = 10;
+            log(ninja.skillLevel === 10, "The value was updated");
+
+            const emperor = { name: "Komei" };
+            const representative = new Proxy(emperor, {
+                get: (target, key) => {
+                    report("Reading " + key + " through a proxy");
+                    return key in target ? target[key] : "Don't bother the emperor!"
+                },
+                set: (target, key, value) => {
+                    report("Writing " + key + " through a proxy");
+                    target[key] = value;
+                }
+            });
+
+            log(emperor.name === "Komei", "The emperor's name is Komei");
+            log(representative.name === "Komei", "We can get the name property through a proxy");
+            log(emperor.nickname === undefined, "The emperor doesn’t have a nickname ");
+            log(representative.nickname === "Don't bother the emperor!", "The proxy jumps in when we make inproper requests");
+            representative.nickname = "Tenno";
+            log(emperor.nickname === "Tenno", "The emperor now has a nickname");
+            log(representative.nickname === "Tenno", "The nickname is also accessible through the proxy");
+
+            function isPrime(number){
+                if(number < 2) { return false; }
+                for(let i = 2; i < number; i++) {
+                    if(number % i === 0) { return false; }
+                }
+
+                return true;
+            }
+
+            isPrime = new Proxy(isPrime, {
+                apply: (target, thisArg, args) => {
+                    console.time("isPrime");
+                    log("args=", args);
+                    const result = target.apply(thisArg, args);
+                    console.timeEnd("isPrime");
+                    return result;
+                }
+            });
+
+            isPrime(1299827);
+
+            function Folder() {
+                return new Proxy({}, {
+                    get: (target, property) => {
+                        report("Reading " + property);
+                        if(!(property in target)) {
+                            target[property] = new Folder();
+                        }
+                        return target[property];
+                    }
+                });
+            }
+
+            const rootFolder = new Folder();
+            try {
+                rootFolder.ninjasDir.firstNinjaDir.ninjaFile = "yoshi.txt";
+                log("An exception wasn’t raised", rootFolder);
+            }
+            catch(e){
+                log("An exception has occurred");
+            }
+
+            function createNegativeArrayProxy(array){
+                if (!Array.isArray(array)) {
+                    throw new TypeError('Expected an array');
+                }
+                return new Proxy(array, {
+                    get: (target, index) => {
+                        index = +index;
+                        return target[index < 0 ? target.length + index : index];
+                    },
+                    set: (target, index, val) => {
+                        index = +index;
+                        return target[index < 0 ? target.length + index : index] = val;
+                    }
+                });
+            }
+
+            function measure(items){
+                const startTime = new Date().getTime();
+                for(let i = 0; i < 500000; i++){
+                    items[0] === "Yoshi";
+                    items[1] === "Kuma";
+                    items[2] === "Hattori";
+                }
+
+                return new Date().getTime() - startTime;
+            }
+
+            const ninjas = ["Yoshi", "Kuma", "Hattori"];
+            const proxiedNinjas = createNegativeArrayProxy(ninjas);
+            console.log("Proxies are around", Math.round(measure(proxiedNinjas)/ measure(ninjas)), "times slower");
+
         </script>
 </document>
