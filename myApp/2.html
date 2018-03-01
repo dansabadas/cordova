@@ -1,0 +1,176 @@
+<document>
+    <body>
+        <div id="subTree">
+            <form>
+            <input type="text"/>
+            </form>
+            <p>Paragraph</p>
+            <span>Span</span>
+            </div>
+    </body>
+    <script
+        src="https://code.jquery.com/jquery-3.3.1.js"
+        integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+        crossorigin="anonymous"></script>
+    <script>
+        let assert = console.assert;
+        let log = console.log;
+        function traverseDOM(element, callback) {
+            callback(element);
+            element = element.firstElementChild;
+            while (element) {
+                traverseDOM(element, callback);
+                element = element.nextElementSibling;
+            }
+        }
+
+        function* DomTraversal(element){
+            yield element;
+            element = element.firstElementChild;
+            while (element) {
+                yield* DomTraversal(element);
+                element = element.nextElementSibling;
+            }
+        }
+
+        const subTree = document.getElementById("subTree");
+        traverseDOM(subTree, function(element) {
+            log(element !== null, element.nodeName);
+        });
+
+        for(let element of DomTraversal(subTree)) {
+            log(element !== null, element.nodeName);
+        }
+
+        function* NinjaGenerator(action) {
+            const imposter = yield ("Hattori " + action);
+            log(imposter === "Hanzo", "The generator has been infiltrated");
+            yield ("Yoshi (" + imposter + ") " + action);
+        }
+
+        const ninjaIterator = NinjaGenerator("skulk");
+        const result1 = ninjaIterator.next();
+        log(result1.value === "Hattori skulk", "Hattori is skulking");
+        const result2 = ninjaIterator.next("Hanzo");
+        log(result2.value === "Yoshi (Hanzo) skulk", "We have an imposter!");
+
+        const ninjaPromise = new Promise((resolve, reject) => {
+            log('123...');
+            resolve("Hattori");
+            //reject("An error resolving a promise!");
+        });
+        log('cantautor');
+        ninjaPromise.then(ninja => {
+            log(ninja === "Hattori", "We were promised Hattori!");
+        }, err => {
+            fail("There shouldn't be an error")
+        });
+
+        const explicitRejectPromise = new Promise((resolve, reject) => {
+            reject("Explicitly reject a promise!");
+        });
+
+        explicitRejectPromise.then(
+            () => fail("Happy path, won't be called!"),
+            error => log(error, "A promise was explicitly rejected!")
+        );
+
+        const implicitRejectPromise = new Promise((resolve, reject) => {
+            undeclaredVariable++;
+        });
+                
+        implicitRejectPromise
+            .then(() => fail("Happy path, won't be called!"))
+            .catch(error => log(error, "Third promise was also rejected"));
+
+        function getJSON(url) {
+            return new Promise((resolve, reject) => {
+                const request = new XMLHttpRequest();
+                request.open("GET", url);
+                request.onload = function() {
+                    try {
+                        if(this.status === 200 ){
+                        resolve(JSON.parse(this.response));
+                        } else{
+                        reject(this.status + " " + this.statusText);
+                        }
+                    } catch(e){
+                        reject(e.message);
+                    }
+                };
+                request.onerror = function() {
+                    reject(this.status + " " + this.statusText);
+                };
+
+                request.send();
+            });
+        }
+
+        getJSON("data/ninjas.json").then(ninjas => {
+        log(ninjas !== null, ninjas, "Ninjas obtained!");
+        }).catch(e => log("Shouldn't be here:" + e));
+
+        getJSON("data/ninjas.json")
+            .then(ninjas => {log(ninjas, "Ninja missions obtained!"); getJSON(ninjas[0].missionsUrl);})
+            .then(missions => log(missions, "Ninja missions obtained!"))
+            .catch(error => log(error, "An error has occurred"));
+
+            Promise
+                .all([getJSON("data/ninjas.json"),
+                    getJSON("data/missions.json")])
+                .then(results => {
+                    const ninjas = results[0], missions = results[1];
+                    log(ninjas, missions, "The plan is ready to be set in motion!");
+                }).catch(error => {
+                    log("A problem in carrying out our plan!");
+                });
+
+            Promise
+                .race([getJSON("data/ninjas.json"),
+                    getJSON("data/missions.json")])
+                .then(ninja => {
+                    log(ninja, "race!");
+                }).catch(error => {
+                    log("A problem in carrying out our plan!");
+                });
+
+                async(function*(){
+                    try {
+                        const ninjas = yield getJSON("data/ninjas.json");
+                        log("ninjas", ninjas);
+                        const missions = yield getJSON(ninjas[0].missionsUrl);
+                        log("missions", missions);
+                        //Study the mission details
+                    }
+                    catch(e) {
+                        //Oh no, we weren't able to get the mission details
+                    }
+                });
+
+                function async(generator) {
+                    var iterator = generator();
+                    function handle(iteratorResult) {
+                        if(iteratorResult.done) { return; }
+                        const iteratorValue = iteratorResult.value;
+                        if(iteratorValue instanceof Promise) {
+                            iteratorValue
+                                .then(res => handle(iterator.next(res)))
+                                .catch(err => iterator.throw(err));
+                        }
+                    }
+                    try {
+                        handle(iterator.next());
+                    }
+                    catch (e) { iterator.throw(e); }
+                }
+                
+                log('the end of 6');
+                const promise = new Promise((resolve, reject) => {
+                    resolve("Hattori");
+                    setTimeout(()=> reject("Yoshi"), 500);
+                });
+                promise
+                    .then(val => log("Success chapter 6: " + val))
+                    .catch(e => log("Error chapter 6: " + e));
+        </script>
+</document>
