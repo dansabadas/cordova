@@ -12,8 +12,11 @@ export class HomePage {
     { title:'About Us',  pic:'assets/img/coffee6.jpg', pushPage: 'AboutPage' },
     { title:'Locations',  pic:'assets/img/cafe2.jpg', pushPage: 'LocationsPage' }
   ];
-  constructor(public navCtrl: NavController) {
 
+  logPage: any;
+
+  constructor(public navCtrl: NavController) {
+      this.logPage = 'LoginPage';
   }
 
 }
