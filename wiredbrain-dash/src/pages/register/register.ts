@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
 import { HomePage } from '../home/home';
 import { AngularFireAuth } from 'angularfire2/auth';
-import * as firebase from 'firebase/app';
-
+//import * as firebase from 'firebase/app';
+import { UserServiceProvider } from '../../providers/user-service/user-service';
 /**
  * Generated class for the RegisterPage page.
  *
@@ -25,9 +25,8 @@ export class RegisterPage {
   };
 
   constructor(public navCtrl: NavController, public navParams: NavParams, 
-              public alertCtrl: AlertController, private afAuth: AngularFireAuth
-              //private userService: UserServiceProvider
-            ) {}
+    public alertCtrl: AlertController, private afAuth: AngularFireAuth, 
+    private userService: UserServiceProvider) {}
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad RegisterPage');
@@ -56,10 +55,8 @@ export class RegisterPage {
   }
 
   regSuccess(result){
-    this.displayAlert(result.email,'account created for this email address');
-    this.afAuth.auth.signInWithEmailAndPassword(this.reg.email, this.reg.passWrd1)
+    //this.displayAlert(result.email,'account created for this email address');
+    this.userService.logOn(this.reg.email, this.reg.passWrd1)
       .then(res => this.navCtrl.push(HomePage));
-    // this.userService.logOn(this.reg.email, this.reg.passWrd1)
-    //   .then(res => this.navCtrl.push(HomePage))
   }
 }

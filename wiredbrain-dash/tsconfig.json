@@ -17,6 +17,8 @@
     "src/**/*.ts"
   ],
   "exclude": [
+    "plugins",
+    "platforms",
     "node_modules",
     "src/**/*.spec.ts",
     "src/**/__tests__/*.ts"
@@ -26,3 +28,4 @@
     "rewriteTsconfig": false
   }
 }
+ 
