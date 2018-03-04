@@ -7,6 +7,8 @@
             <p>Paragraph</p>
             <span>Span</span>
             </div>
+            <input id="first"/>
+            <input id="second"/>
     </body>
     <script
         src="https://code.jquery.com/jquery-3.3.1.js"
@@ -286,6 +288,105 @@
             const ninjas = ["Yoshi", "Kuma", "Hattori"];
             const proxiedNinjas = createNegativeArrayProxy(ninjas);
             console.log("Proxies are around", Math.round(measure(proxiedNinjas)/ measure(ninjas)), "times slower");
+
+            const ninjas2 = ["Yagyu", "Kuma", "Hattori", "Fuma"];
+            var removedItems = ninjas2.splice(1, 1);
+            log(removedItems.length === 1, "One item was removed");
+            log(removedItems[0] === "Kuma");
+
+            const ninjas3 = ["Yagyu", "Kuma", "Hattori"];
+            for(let i = 0; i < ninjas3.length; i++){
+                log(ninjas3[i] !== null, ninjas3[i]);
+            }
+            ninjas3.forEach(ninja => {
+                log(ninja !== null, ninja);
+            });
+
+            const ninjas4 = [
+                {name: "Yagyu", weapon: "shuriken"},
+                {name: "Yoshi" },
+                {name: "Kuma", weapon: "wakizashi"}
+            ];
+            const weapons = ninjas4.map(ninja => ninja.weapon);
+            weapons.forEach(w => {
+                log("w= ", w);
+            });
+            const ninjaWithWakizashi = ninjas4.find(ninja => {
+                return ninja.weapon === "wakizashi";
+            });
+            const armedNinjas = ninjas4.filter(ninja => "weapon" in ninja);
+            log("ninjaWithWakizashi=", ninjaWithWakizashi);
+            log("armedNinjas=", armedNinjas);
+
+            const numbers = [1, 2, 3, 4];
+            const sum = numbers.reduce((aggregated, number) => aggregated + number, 0);
+            log(sum === 10, "The sum of first four numbers is 10");
+
+            const elems = {
+                length: 0,
+                add: function(elem){
+                    Array.prototype.push.call(this, elem);
+                },
+                gather: function(id){
+                    this.add(document.getElementById(id));
+                },
+                find: function(callback){
+                    return Array.prototype.find.call(this, callback);
+                }
+            };
+            elems.gather("first");
+            log(elems.length === 1 && elems[0].nodeType,
+            "Verify that we have an element in our stash");
+            elems.gather("second");
+            log(elems.length === 2 && elems[1].nodeType,
+            "Verify the other insertion");
+            var found = elems.find(elem => elem.id === "second");
+            log(found && found.id === "second",
+            "We've found our element");
+
+            //defective keys in javascript () keys that are not strings but objects => toString invocation
+            const firstElement = document.getElementById("firstElement");
+            const secondElement = document.getElementById("secondElement");
+            const map = {};
+            map[firstElement] = { data: "firstElement"};
+            log(map[firstElement].data === "firstElement",
+            "The first element is correctly mapped");
+            map[secondElement] = { data: "secondElement"};
+            log(map[secondElement].data === "secondElement",
+            "The second element is correctly mapped");
+            log(map[firstElement].data === "firstElement",
+            "But now the firstElement is overriden!");
+
+            const map2 = new Map();
+            const currentLocation = location.href;
+            const firstLink = new URL(currentLocation);
+            const secondLink = new URL(currentLocation);
+            map2.set(firstLink, { description: "firstLink"});
+            map2.set(secondLink, { description: "secondLink"});
+
+            assert(map2.get(firstLink).description === "firstLink",
+            "First link mapping" );
+            assert(map2.get(secondLink).description === "secondLink",
+            "Second link mapping");
+            assert(map2.size === 2, "There are two mappings");
+
+            const directory = new Map();
+            directory.set("Yoshi", "+81 26 6462");
+            directory.set("Kuma", "+81 52 2378 6462");
+            directory.set("Hiro", "+81 76 277 46");
+
+            for(let item of directory){
+                log(item[0] !== null, "Key:" + item[0]);
+                log(item[1] !== null, "Value:" + item[1]);
+            }
+            for(let key of directory.keys()){
+                log(key !== null, "Key:" + key);
+                log(directory.get(key) != null,
+                "Value:" + directory.get(key));
+            }
+            for(var value of directory.values()){
+                log(value !== null, "Value:" + value);
+            }
 
         </script>
 </document>
