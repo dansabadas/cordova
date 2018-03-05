@@ -2,3 +2,11 @@ C:\dan\Code\GIT-HUB\cordova\VS2017-BlankCordovaApp\VS2017-BlankCordovaApp\www\sc
 C:\dan\Code\GIT-HUB\cordova\VS2017-BlankCordovaApp\VS2017-BlankCordovaApp\www\scripts\application.js.map
 C:\dan\Code\GIT-HUB\cordova\VS2017-BlankCordovaApp\VS2017-BlankCordovaApp\www\scripts\startup.js
 C:\dan\Code\GIT-HUB\cordova\VS2017-BlankCordovaApp\VS2017-BlankCordovaApp\www\scripts\startup.js.map
+C:\dan\Code\GIT-HUB\cordova\VS2017-BlankCordovaApp\VS2017-BlankCordovaApp\www\scripts\application.js
+C:\dan\Code\GIT-HUB\cordova\VS2017-BlankCordovaApp\VS2017-BlankCordovaApp\www\scripts\application.js.map
+C:\dan\Code\GIT-HUB\cordova\VS2017-BlankCordovaApp\VS2017-BlankCordovaApp\www\scripts\startup.js
+C:\dan\Code\GIT-HUB\cordova\VS2017-BlankCordovaApp\VS2017-BlankCordovaApp\www\scripts\startup.js.map
+C:\dan\Code\GIT-HUB\cordova\VS2017-BlankCordovaApp\VS2017-BlankCordovaApp\www\scripts\application.js
+C:\dan\Code\GIT-HUB\cordova\VS2017-BlankCordovaApp\VS2017-BlankCordovaApp\www\scripts\application.js.map
+C:\dan\Code\GIT-HUB\cordova\VS2017-BlankCordovaApp\VS2017-BlankCordovaApp\www\scripts\startup.js
+C:\dan\Code\GIT-HUB\cordova\VS2017-BlankCordovaApp\VS2017-BlankCordovaApp\www\scripts\startup.js.map

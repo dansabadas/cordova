@@ -10,10 +10,11 @@ import { UserServiceProvider } from '../../providers/user-service/user-service';
 })
 export class HomePage {
   menuData = [
-    { title:'Our Menu',  pic:'assets/img/soup1.jpg', pushPage: 'MenuPage' },
-    { title:'Account',  pic:'assets/img/coffee-people3.jpg', pushPage: 'AccountPage' },
-    { title:'About Us',  pic:'assets/img/coffee6.jpg', pushPage: 'AboutPage' },
-    { title:'Locations',  pic:'assets/img/cafe2.jpg', pushPage: 'LocationsPage' }
+    // { title:'Our Menu',  pic:'assets/img/soup1.jpg', pushPage: 'MenuPage' },
+    // { title:'Account',  pic:'assets/img/coffee-people3.jpg', pushPage: 'AccountPage' },
+    // { title:'About Us',  pic:'assets/img/coffee6.jpg', pushPage: 'AboutPage' },
+    // { title:'Locations',  pic:'assets/img/cafe2.jpg', pushPage: 'LocationsPage' },
+    { title:'Tests',  pic:'assets/img/cafe2.jpg', pushPage: 'ViewItemsPage' }
   ];
 
   logPage: any
@@ -24,7 +25,7 @@ export class HomePage {
   constructor(public navCtrl: NavController, private afAuth: AngularFireAuth, private userService: UserServiceProvider) {
       this.logPage = 'LoginPage';
 
-      this.afAuth.auth.onAuthStateChanged( user => {
+      this.afAuth.auth.onAuthStateChanged(user => {
         if (user) {
           this.loggedIn = user.email;
         }

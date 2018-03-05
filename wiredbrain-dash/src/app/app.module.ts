@@ -14,6 +14,9 @@ import { UserServiceProvider } from '../providers/user-service/user-service';
 
 import { IonicStorageModule } from '@ionic/storage';
 
+import { AddItemPage } from '../pages/test-pages/add-item/add-item';
+import { ItemDetailPage } from '../pages/test-pages/item-detail/item-detail';
+
 export const firebaseConfig = {
   apiKey: "AIzaSyBb3BvkmMgjkdr_sX6mSnll-BxDvY8Ze0o",
   authDomain: "wired-coffee-3a11c.firebaseapp.com",
@@ -25,7 +28,9 @@ export const firebaseConfig = {
 @NgModule({
   declarations: [
     MyApp,
-    HomePage
+    HomePage,
+    AddItemPage,
+    ItemDetailPage
   ],
   imports: [
     HttpModule ,
@@ -39,7 +44,9 @@ export const firebaseConfig = {
   bootstrap: [IonicApp],
   entryComponents: [
     MyApp,
-    HomePage
+    HomePage,
+    AddItemPage,
+    ItemDetailPage
   ],
   providers: [
     StatusBar,
