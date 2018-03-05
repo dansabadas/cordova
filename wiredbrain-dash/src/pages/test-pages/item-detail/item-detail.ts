@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { NavParams } from 'ionic-angular';
- 
+
+import { Item } from '../../../models/item';
+
 @Component({
   selector: 'page-item-detail',
   templateUrl: 'item-detail.html'
@@ -15,8 +17,8 @@ export class ItemDetailPage {
   }
  
   ionViewDidLoad() {
-    this.title = this.navParams.get('item').title;
-    this.description = this.navParams.get('item').description;
+    let item = <Item>this.navParams.get('item');
+    this.title = item.title;
+    this.description = item.description;
   }
- 
 }

@@ -3,6 +3,8 @@ import { IonicPage, NavController, ModalController } from 'ionic-angular';
 
 import { AddItemPage } from '../add-item/add-item';
 import { ItemDetailPage } from '../item-detail/item-detail';
+import { Item } from '../../../models/item';
+import { ItemDataStorageProvider } from '../../../providers/item-service/item-service';
 
 @IonicPage()
 @Component({
@@ -11,18 +13,19 @@ import { ItemDetailPage } from '../item-detail/item-detail';
 })
 export class ViewItemsPage {
 
-  public items = [];
+  public items : Item[] = [];
  
-  constructor(public navCtrl: NavController, public modalCtrl: ModalController) {
+  constructor(public navCtrl: NavController, public modalCtrl: ModalController, public dataService: ItemDataStorageProvider) {
+    this.dataService.getData().then((todos) => {
  
+      if(todos){
+        this.items = todos;
+      }
+ 
+    });
   }
  
   ionViewDidLoad(){
-    this.items = [
-      {title: 'hi1', description: 'test1'},
-      {title: 'hi2', description: 'test2'},
-      {title: 'hi3', description: 'test3'}
-    ];
   }
  
   addItem(){
@@ -39,6 +42,7 @@ export class ViewItemsPage {
  
   saveItem(item){
     this.items.push(item);
+    this.dataService.save(this.items);
   }
  
   viewItem(item){
