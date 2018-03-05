@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
-
 import { NavController, ViewController } from 'ionic-angular';
- 
+
+import { Item } from '../../../models/item';
+
 @Component({
   selector: 'page-add-item',
   templateUrl: 'add-item.html'
@@ -15,14 +16,9 @@ export class AddItemPage {
   { }
  
   saveItem(){
- 
-    let newItem = {
-      title: this.title,
-      description: this.description
-    };
+    let newItem = new Item(this.title, this.description);
  
     this.view.dismiss(newItem);
- 
   }
  
   close(){

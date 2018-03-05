@@ -16,6 +16,7 @@ import { IonicStorageModule } from '@ionic/storage';
 
 import { AddItemPage } from '../pages/test-pages/add-item/add-item';
 import { ItemDetailPage } from '../pages/test-pages/item-detail/item-detail';
+import { ItemDataStorageProvider } from '../providers/item-service/item-service';
 
 export const firebaseConfig = {
   apiKey: "AIzaSyBb3BvkmMgjkdr_sX6mSnll-BxDvY8Ze0o",
@@ -52,7 +53,8 @@ export const firebaseConfig = {
     StatusBar,
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
-    UserServiceProvider
+    UserServiceProvider,
+    ItemDataStorageProvider
   ]
 })
 export class AppModule {}
