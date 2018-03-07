@@ -14,7 +14,8 @@ export class HomePage {
     // { title:'Account',  pic:'assets/img/coffee-people3.jpg', pushPage: 'AccountPage' },
     // { title:'About Us',  pic:'assets/img/coffee6.jpg', pushPage: 'AboutPage' },
     // { title:'Locations',  pic:'assets/img/cafe2.jpg', pushPage: 'LocationsPage' },
-    { title:'Tests',  pic:'assets/img/cafe2.jpg', pushPage: 'ViewItemsPage' }
+    { title:'Local Items Tests',  pic:'assets/img/coffee6.jpg', pushPage: 'ViewItemsPage' },
+    { title:'Http Posts Tests',  pic:'assets/img/soup1.jpg', pushPage: 'HttpPostsPage' }
   ];
 
   logPage: any
@@ -27,7 +28,7 @@ export class HomePage {
 
       this.afAuth.auth.onAuthStateChanged(user => {
         if (user) {
-          this.loggedIn = user.email;
+          this.loggedIn = user.email; 
         }
       });
   }

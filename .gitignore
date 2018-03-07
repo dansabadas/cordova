@@ -1,3 +1,6 @@
 myApp/node_modules/
 myApp/platforms/
 myApp/plugins/
+AspCore/AspCore/obj/
+AspCore/AspCore/bin/
+AspCore/.vs/
