@@ -18,7 +18,7 @@ namespace AspCore.Controllers
             return new string[] { "value1", "value2" };
         }
 
-        [EnableCors("SiteCorsPolicy")]
+        [EnableCors("CorsPolicy")]
         [HttpGet("postings")]
         public IEnumerable<Post> GetAllPostings()
         {
