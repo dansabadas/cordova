@@ -4,16 +4,18 @@ import { AlertController } from 'ionic-angular';
 import { Http } from '@angular/http';
 import 'rxjs/add/operator/map';
 
+import { Post } from '../../../models/post';
+
 @IonicPage()
 @Component({
   selector: 'page-http-posts',
   templateUrl: 'http-posts.html',
 })
 export class HttpPostsPage {
-  posts: any;
+  posts: Post[];
   constructor(public navCtrl: NavController, public http: Http, public alertCtrl: AlertController) {
     let random : number = Math.floor(Math.random() * 2) + 1;
-    let url : string = random == 1 ? 'http://127.0.0.1:51167/api/values/postings' : 'https://www.reddit.com/r/gifs/new/.json?limit=10';
+    let url : string = random == 1 ? 'http://localhost:51167/api/values/postings' : 'https://www.reddit.com/r/gifs/new/.json?limit=10';  //10.0.3.2
     this
       .http
       .get(url)
