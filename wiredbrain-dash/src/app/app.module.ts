@@ -6,7 +6,6 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { StatusBar } from '@ionic-native/status-bar';
 
 import { MyApp } from './app.component';
-import { HomePage } from '../pages/home/home';
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { AngularFireAuthModule } from 'angularfire2/auth';
@@ -14,10 +13,10 @@ import { UserServiceProvider } from '../providers/user-service/user-service';
 
 import { IonicStorageModule } from '@ionic/storage';
 
+import { HomePage } from '../pages/home/home';    // all pages that do not have a module (like modals) are declared here
 import { AddItemPage } from '../pages/test-pages/add-item/add-item';
 import { ItemDetailPage } from '../pages/test-pages/item-detail/item-detail';
 import { ItemDataStorageProvider } from '../providers/item-service/item-service';
-
 
 export const firebaseConfig = {
   apiKey: "AIzaSyBb3BvkmMgjkdr_sX6mSnll-BxDvY8Ze0o",

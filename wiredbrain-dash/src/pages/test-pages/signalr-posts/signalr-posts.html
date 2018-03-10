@@ -1,0 +1,22 @@
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>signalr-posts</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+    <h2>Hello {{nick}}!</h2>
+  <ion-item>
+    <ion-label color="danger">Message</ion-label>
+    <ion-input type="text"[(ngModel)]="message" name="text"></ion-input>
+  </ion-item>
+  <button ion-button color="secondary" (click)="sendMessage()">Send Message</button>
+  <ion-content>
+    <ion-list>
+      <ion-item *ngFor="let message of messages">{{message}}</ion-item>
+    </ion-list>
+  </ion-content> 
+</ion-content>

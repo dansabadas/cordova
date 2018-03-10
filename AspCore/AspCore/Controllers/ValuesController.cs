@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using AspCore.Models;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AspCore.Controllers
 {
-    [Route("api/[controller]")]
+  [Route("api/[controller]")]
     public class ValuesController : Controller
     {
         // GET api/values

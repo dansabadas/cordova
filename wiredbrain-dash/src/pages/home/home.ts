@@ -14,8 +14,9 @@ export class HomePage {
     // { title:'Account',  pic:'assets/img/coffee-people3.jpg', pushPage: 'AccountPage' },
     // { title:'About Us',  pic:'assets/img/coffee6.jpg', pushPage: 'AboutPage' },
     // { title:'Locations',  pic:'assets/img/cafe2.jpg', pushPage: 'LocationsPage' },
-    { title:'Local Items Tests',  pic:'assets/img/coffee6.jpg', pushPage: 'ViewItemsPage' },
-    { title:'Http Posts Tests',  pic:'assets/img/soup1.jpg', pushPage: 'HttpPostsPage' }
+    { title: 'Local Items Tests',  pic: 'assets/img/coffee6.jpg', pushPage: 'ViewItemsPage' },
+    { title: 'Http Posts Tests',  pic: 'assets/img/soup1.jpg', pushPage: 'HttpPostsPage' },
+    { title: 'SignalR Posts Tests',  pic: 'assets/img/cafe2.jpg', pushPage: 'SignalrPostsPage' }
   ];
 
   logPage: any
