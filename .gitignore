@@ -4,3 +4,8 @@ myApp/plugins/
 AspCore/AspCore/obj/
 AspCore/AspCore/bin/
 AspCore/.vs/
+.vs/
+AspCore/packages/
+AspStandard/bin/
+AspStandard/obj/
+packages/

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
-import { HubConnection } from '@aspnet/signalr-client';
+import { HubConnection, TransportType } from '@aspnet/signalr-client';
 
 
 @IonicPage()
@@ -21,15 +21,17 @@ export class SignalrPostsPage {
     this.hubConnection
       .invoke('Send', `${this.nick}: ${this.message}`)
       .then(() => this.message = '')
-      .catch(err => console.error(err));
+      .catch(err => console.log(err));
   }
 
   ionViewDidLoad() {
     
     this.nick = window.prompt('Your name:', 'John');
 
-    this.hubConnection = new HubConnection('http://localhost:51167/loopy');
-
+    this.hubConnection = new HubConnection('http://localhost:51167/loopy', {
+      transport: TransportType.WebSockets
+    }); //http://localhost:59479/signalr/loopy http://localhost:51167/loopy
+    
     this.hubConnection
       .start()
       .then(() => console.log('Connection started!'))

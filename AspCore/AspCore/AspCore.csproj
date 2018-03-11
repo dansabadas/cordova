@@ -2,6 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
+    <ApplicationIcon />
+    <OutputType>Exe</OutputType>
+    <StartupObject />
+    <RuntimeIdentifier>win8-x64</RuntimeIdentifier>
+    <ServerGarbageCollection>false</ServerGarbageCollection>
+    <Win32Resource />
   </PropertyGroup>
 
   <ItemGroup>
