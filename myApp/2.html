@@ -388,5 +388,99 @@
                 log(value !== null, "Value:" + value);
             }
 
+            const tags =  /^(area|base|br|col|embed|hr|img|input|keygen|link|menuitem|meta|param|source|track|wbr)$/i;
+            function convert(html) {
+                return html.replace(/(<(\w+)[^>]*?)\/>/g, (all, front, tag) => {
+                    return tags.test(tag) ? all : front + "></" + tag + ">";
+                });
+            }
+            log(convert("<a/>") === "<a></a>", "Check anchor conversion.");
+            log(convert("<hr/>") === "<hr/>", "Check hr conversion.");
+
+            function getNodes(htmlString, doc) {
+                const map = {
+                    "<td":[3,"<table><tbody><tr>","</tr></tbody></table>"],
+                    "<th":[3,"<table><tbody><tr>","</tr></tbody></table>"],
+                    "<tr":[2,"<table><thead>","</thead></table>"],
+                    "<option":[1,"<select multiple>","</select>"],
+                    "<optgroup":[1,"<select multiple>","</select>"],
+                    "<legend":[1,"<fieldset>","</fieldset>"],
+                    "<thead":[1,"<table>","</table>"],
+                    "<tbody":[1,"<table>","</table>"],
+                    "<tfoot":[1,"<table>","</table>"],
+                    "<colgroup":[1,"<table>","</table>"],
+                    "<caption":[1,"<table>","</table>"],
+                    "<col":[2,"<table><tbody></tbody><colgroup>","</colgroup></table>"]
+                };
+
+                const tagName = htmlString.match(/<\w+/);
+                let mapEntry = tagName ? map[tagName[0]] : null;
+                if (!mapEntry) { mapEntry = [0, " "," " ];}
+                let div = (doc || document).createElement("div");
+                div.innerHTML = mapEntry[1] + htmlString + mapEntry[2];
+                while (mapEntry[0]--) { div = div.lastChild; }
+                if (fragment) {
+                    while (div.firstChild) {
+                        fragment.appendChild(div.firstChild);
+                    }
+                }
+
+                return div.childNodes; 
+            }
+
+            //log(getNodes("<td>test</td><td>test2</td>").length === 2, "Get two nodes back from the method.");
+            //log(getNodes("<td>test</td>")[0].nodeName === "TD", "Verify that we're getting the right node.");
+
+            function green(){
+                let a = 2;
+                return function yellow(){
+                    return a++;
+                }
+            }
+            var digit_name = (function(n){
+                var names = ['zero', 'one', 'two'];
+                
+                return function (n) {
+                    return names[n];
+                } 
+            }());
+
+            console.log(digit_name(1));
+
+            function fade(id){
+                var dom = document.getElementById(id),
+                    level = 1;
+                function step() {
+                    console.log(level);
+                    var h = level.toString(16);
+                    dom.style.backgroundColor = '#FFFF' + h + h;
+                    if(level < 15){
+                        level += 1;
+                        setTimeout(step, 100);
+                    }
+                }
+                
+                setTimeout(step, 100);
+            }
+
+            function gizmo(id){
+                return {
+                    toString: function() {
+                        return "gizmo" + id;
+                    }
+                };
+            }
+
+            function hoozit(id){
+                var that = gizmo(id);
+                that.test = function(testid){
+                    return testid === id;
+                };
+                
+                return that;
+            }
+
+            var my_hoozit = hoozit("SUCCESS");
+            log(my_hoozit, my_hoozit.test("SUCCESS"));
         </script>
 </document>
