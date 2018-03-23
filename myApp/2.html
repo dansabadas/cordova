@@ -919,5 +919,56 @@
 
             var addm = liftm(add, "+");
             log(JSON.stringify(addm(1, 3)));
+
+            //30. write a function 'exp' that evaluates simple array expressions.
+            function exp(arr){
+                if(typeof arr === 'number'){
+                    return arr;
+                }
+                var binaryF = arr.shift();
+                return binaryF(arr.shift(), arr.shift());
+            }
+
+            function exp(value){
+                return Array.isArray(value)
+                ? value[0](value[1], value[2])
+                : value;
+            }
+            var sae = [mul, 5, 11];
+            log(exp(sae));
+            log(exp(42));
+
+            //31. Modify exp to evaluate nested array expressions
+            function exp(value){
+                if(!Array.isArray(value)) return value;
+                var val1 = Array.isArray(value[1]) ? exp(value[1]) : value[1],
+                    val2 = Array.isArray(value[2]) ? exp(value[2]) :value[2];
+                return value.length === 3 
+                    ? value[0](val1, val2) 
+                    : value[0](val1)
+            }
+
+            function exp(value){
+                if(!Array.isArray(value)) return value;
+                return value[0](exp(value[1]), exp(value[2]));
+            }
+
+            var nae = [
+                Math.sqrt,
+                [
+                    add,
+                    [square, 3],
+                    [square, 4]
+                ]
+            ];
+            log(exp(nae));
+
+            //32. write a function 'addg' which adds from many invocations until it sees an empty invocation (hint: it returns itself somehow)
+            function addg(el){
+
+            }
+
+            log(addg());//undefined
+            log(addg(1)(2)(4)(8));//15
     </script>
 </document>
