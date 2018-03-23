@@ -482,5 +482,442 @@
 
             var my_hoozit = hoozit("SUCCESS");
             log(my_hoozit, my_hoozit.test("SUCCESS"));
-        </script>
+
+            //1.
+            function funky(o) {
+                o = null;
+            }
+
+            var x = [];
+
+            funky(x);
+            log(x); //a. throw exception b. =null c. =[]
+
+            //2.
+            function swap(a, b){
+                var temp = a;
+                a = b;
+                b = temp;
+            }
+
+            var x = 1, y = 2;
+            swap(x, y);
+            log(x); //a. 1 b.2 c.undefined d. throw exc
+
+            //3. write add, sub and mul functions (should be as below)
+            function add(a, b){
+                return a+b;
+            }
+            function sub(a, b){
+                return a-b;
+            }
+            function mul(a, b){
+                return a*b;
+            }
+            log(add(3,4));
+            log(sub(3,4));
+            log(mul(3,4));
+
+            //4. closure with 1 arg
+            function identityf(o){
+                return function(){
+                    return o;
+                }
+            }
+
+            var three = identityf(3);
+            log(three());
+
+            //5. closure with 2 args
+            function addf(a){
+                return function(b){
+                    return add(a,b);
+                }
+            }
+            log(addf(3)(4));
+
+            //6. closure with 3 args: 2 numerical and one function which handles the 2 numbers
+            function liftf(f){
+                 return function(a1){
+                    return function(b1){
+                            return f(a1, b1);
+                    };
+                };
+            }
+            var addf1 = liftf(add);
+            log(addf1(3)(4));
+            log(liftf(mul)(5)(6));
+
+            //7. curry function
+            function curry(f, a){
+                return function(b){
+                    return f(a, b);
+                }
+            }
+
+            var add3 = curry(add, 3);
+            log(add3(4));
+            log(curry(mul, 5)(6));
+
+            //8. write increment function using existing functions
+            var inc = addf(1);
+            log(inc(5));
+
+            var inc2 = liftf(add)(1);
+            var inc3 = curry(add, 1);
+            log(inc3(5));
+
+            //9. write a func called "twice" 
+            // that takes a binary func and return an unary func that passes its argument to the binary fun twice
+            function twice(binaryFunc){
+                return function(b){
+                    return binaryFunc(b, b);
+                }
+            }
+
+            var doubl = twice(add);
+            log(doubl(11));
+            var square = twice(mul);
+            log(square(11));
+
+            //10. write reverse, a func which reverses the arguments of a binary function
+            function reverse(binary){
+                return function(a, b){
+                    return binary(b, a);
+                }
+            }
+
+            var bus = reverse(sub);
+            log(bus(3,2));
+
+            //11. write a func compuseu that takes two unary functions and returns a unary func that calls them both
+            function composeu(unaryFunc1, unaryFunc2){
+                return function(a){
+                    return unaryFunc2(unaryFunc1(a));
+                }
+            }
+            log(composeu(doubl, square)(5));
+
+            //12. write a func composeb that takes two binary funcs and returns a func that calls them both
+            function composeb(bf1, bf2){
+                return function(a, b, c){
+                    return bf2(bf1(a,b), c);
+                }
+            }
+            log(composeb(add, mul)(2, 3, 7));
+
+            //13. write a limit func that allows a binary func to be called a limited number of times
+            function limit(bf1, l){
+                return function(a, b){
+                    if(l >= 1){
+                        l -= 1;
+                        return bf1(a,b);
+                    }
+                    return undefined;
+                }
+            }
+
+            var add_ltd = limit(add, 1);
+            log(add_ltd(3, 4));
+            log(add_ltd(3, 4));
+            var mul_ltd = limit(mul, 2);
+            log(mul_ltd(3, 4));
+            log(mul_ltd(3, 4));
+            log(mul_ltd(3, 4));
+
+            //14. write a 'from' func that produces a generator that will produce produce a serioes of values
+            function from(seed){
+                return function(){
+                    return seed++;
+                }
+            } 
+            
+            var index = from(0);
+            log(index());
+            log(index());
+            log(index());
+
+            //15. write a 'to' func which takes a generator and an end val and returns a generator that will produce numbers up to that limit
+            function to(generator, endVal){
+                return function(){
+                    var nextVal = generator();
+                    if(nextVal < endVal){
+                        return nextVal;
+                    }
+                }
+            } 
+
+            var index = to(from(1), 3);
+            log(index());
+            log(index());
+            log(index());
+
+            //16. write a 'fromTo'that produces a generator that will produce values in a range
+            function fromTo(startVal, endVal){
+                return to(from(startVal), endVal);
+            }
+
+            var index = fromTo(0, 3);
+            log(index());
+            log(index());
+            log(index());
+            log(index());
+
+            //17. write an 'element' func that takes an array and a generator and returns a generator that will produce elements from the array
+            function element(arr, generatorFunc){
+                return function(){
+                    var nextVal = generatorFunc();
+                    if(nextVal !== undefined){
+                        return arr[nextVal];
+                    }
+                }
+            }
+
+            var ele = element(['a', 'b', 'c', 'd'], fromTo(1, 3));
+            log(ele());
+            log(ele());
+            log(ele());
+
+            //18. modify the 'element' function so that the generator argument is optional. 
+            // If generator not provided => then each element of the array will be provided
+            function element(arr, generatorFunc){
+            var generator = generatorFunc !== undefined ? generatorFunc : fromTo(0, arr.length);
+               return function(){
+                    var nextVal = generator();
+                    if(nextVal !== undefined){
+                        return arr[nextVal];
+                    }
+                }
+            }
+
+            var ele = element(['a', 'b', 'c', 'd']);
+            log(ele());
+            log(ele());
+            log(ele());
+            log(ele());
+            log(ele());
+
+            //19. wite a 'collect' func that takes a generator and an array and produces a function  
+            // that will collect the results (made inernally by the generator at every invocation of collect) in the array
+            function collect(generator, arr){
+                return function(){
+                    var res = generator();
+                    if(res !== undefined)
+                    {
+                        arr.push(res);
+                    }
+
+                    return res;
+                }
+            }
+
+            var array = [],
+                col = collect(fromTo(0, 2), array);
+            log(col());
+            log(col());
+            log(col());
+            log(array);
+
+            //20. write a filter func that takes a generator and a predicate 
+            // and produces a generator that produces only the values approved by the predicate
+            function filter(generator, predicate){
+                return function(){ 
+                    var value;                  
+                    do {
+                        value = generator();
+                    } while(value !== undefined && !predicate(value));
+
+                    return value;
+                }
+            }
+
+            var fil = filter(fromTo(0, 5), function third(value){
+                return value % 3 === 0;
+            });
+            log(fil());
+            log(fil());
+            log(fil());
+
+            //21. write a 'concat' function which takes 2 generators and produces a generator that combines the sequences
+            function concat(gen1, gen2){
+                var gen = gen1;
+                return function(){
+                    var value = gen();
+                    if (value !== undefined){
+                        return value;
+                    }
+                    gen = gen2;
+                    return gen();
+                }
+            }
+
+            var con = concat(fromTo(0, 3), fromTo(0, 2));
+            log(con());
+            log(con());
+            log(con());
+            log(con());
+            log(con());
+            log(con());
+
+            //22. make a function 'gensymf' that makes a function that generates unique symbols
+            function gensymf(symbol){
+                var i = 0;
+                return function(){
+                    i += 1;
+                    return symbol + i;
+                }
+            }
+
+            var geng = gensymf("G");
+            var genh = gensymf("H");
+
+            log(geng());
+            log(genh());
+            log(geng());
+            log(genh());
+
+            //23. make a fibonaccif that returns a generator that will return the next fibonacci number
+            function fibonaccif(i1, i2){
+                var i = -1, next;               
+                return function(){
+                    i += 1;
+                    if(i === 0){
+                        return i1;
+                    }
+                    else if (i === 1){
+                        return i2;
+                    }
+                    
+                    next = i1 + i2;
+                    i1 = i2;
+                    i2 = next;
+                    return next;
+                }
+            }
+
+            var fib = fibonaccif(0, 1);
+            log(fib());
+            log(fib());
+            log(fib());
+            log(fib());
+            log(fib());
+            log(fib());
+
+            function fibonaccif(i1, i2){
+                return function(){
+                    var next = i1;
+                    i1 = i2;
+                    i2 += next;
+                    return next;
+                }
+            }
+            fib = fibonaccif(0, 1);
+            log(fib());
+            log(fib());
+            log(fib());
+            log(fib());
+            log(fib());
+            log(fib());
+
+            //24. write a counter function that returns an object containing 2 functions that implement 
+            // an up/down counter, hiding the counter
+            function counter(seed)
+            {
+                return {
+                    up: function() {
+                        seed += 1;
+                        return seed;
+                    },
+                    down: function() {
+                        seed -= 1;
+                        return seed;
+                    }
+                };
+            }
+
+            var object = counter(10),
+                up = object.up,
+                down = object.down;
+            log(up());
+            log(down());
+            log(down());
+            log(up());
+
+            //25. make a revocable function that takes a binary function and returns an object containing 
+            // an invoke function that can invoke the binary function and a revoke function that disables the invoke function
+            function revocable(binaryF){
+                return {
+                    invoke: function(a, b){
+                        return binaryF === undefined ? undefined : binaryF(a, b);
+                    },
+                    revoke: function(){
+                        binaryF = undefined;
+                    }
+                };
+            }
+
+            var rev = revocable(add);
+            add_rev = rev.invoke;
+            log(add_rev(3, 4));
+            rev.revoke();
+            log(add_rev(3, 4));
+
+            //26. write a function m that takes a values and an optional source string and returns them in an object
+            function m(value, source){
+                return {
+                    "value": value,
+                    "source": typeof source === "string" ? source : String(value)
+                };
+            }
+
+            log(JSON.stringify(m(1)));
+            log(JSON.stringify(m(Math.PI, "pi")));
+
+            //27. write a func 'addm' that takes two m objects and returns an m object 
+            //(m have 2 properties. one is mandatory 'value' and the other is optional: 'source')
+            function addm(m1, m2){
+                return m(
+                    m1.value + m2.value,
+                    "("+m1.source+"+"+m2.source+")"
+                );
+            }
+
+            log(JSON.stringify(addm(m(1), m(3))));
+            log(JSON.stringify(addm(m(1), m(Math.PI, "pi"))));
+
+            //28. write a function 'liftm' that takes a binary function and a string and returns a function that acts on m objects
+            function liftm(binary, sign){
+                return function(m1, m2){
+                    return m(
+                        binary(m1.value, m2.value),
+                        "("+m1.source+sign+m2.source+")"
+                    );
+                }
+            }
+
+            var addm = liftm(add, "+");
+            log(JSON.stringify(addm(m(1), m(3))));
+            log(JSON.stringify(liftm(mul, "*")(m(4), m(3))));
+
+            //29. modify liftm so that the functions it produces ca accept arguments that are either numbers or m objects
+            function liftm(binary, sign){
+                return function(a, b){
+                    var value, source;
+                    if(typeof a === 'number') {
+                        a = m(a);
+                    }
+                    if(typeof b === 'number') {
+                        b = m(b);
+                    }
+                    
+                    return m(
+                        binary(a.value, b.value), 
+                        "("+a.source+sign+b.source+")"
+                    );
+                }
+            }
+
+            var addm = liftm(add, "+");
+            log(JSON.stringify(addm(1, 3)));
+    </script>
 </document>
