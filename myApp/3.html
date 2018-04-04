@@ -1,0 +1,538 @@
+<document>
+    <body>
+        <button id="btn1">btn1</button>
+        <button id="btn2">btn1</button>
+    </body>
+    <script>
+        var obj = {
+            id: 42,
+            foo: function(){
+                setTimeout(function(){
+                    console.log(this.id);
+                },1000);
+            },
+            foo2: function(){
+                setTimeout(function(){
+                    console.log(obj.id);
+                },1000);
+            },
+            foo3: function(){
+                var context = this;
+                setTimeout(function(){
+                    console.log(context.id);
+                },1000);
+            },
+            foo4: function(){
+                setTimeout(function(){
+                    console.log(this.id);
+                }.bind(this),1000);
+            },
+            foo5: function foo(){
+                setTimeout(() => {
+                    console.log(this.id);
+                },1000);
+            }
+        };
+        obj.foo();
+        obj.foo2();
+        obj.foo3();
+        obj.foo4();
+        obj.foo5();
+
+        (function IIFE(){
+
+            function foo(x) {
+                var y = x * 2;
+
+                return function bar(z) {
+                    if (z.length > 3) {
+                        return z.map( function baz(v){
+                            if (v > 3) return v + y;
+                            else return baz( v * 4 );
+                        } );
+                    }
+                    else {
+                        var obj = [];
+
+                        setTimeout( function bam(){
+                            obj.length = 1;
+                            obj[0] = this.w;
+                        }.bind( this ), 100 );
+
+                        return obj;
+                    }
+                };
+            }
+
+            var p = foo( 2 );
+            var list1 = [1,3,4];
+            var list2 = list1.concat( 6 );
+
+            list1 = p.call( { w: 42 }, list1 );
+            list2 = p( list2 );
+
+            setTimeout( function(){
+                console.log( list1[0] === list2.reduce( function(s,v){
+                    return s + v;
+                }, 0 ) );
+            }, 200 );
+})();
+
+((foo,p,list1,list2) =>
+	(foo = (x,y = x * 2) =>
+		function bar(z,baz,obj) {
+			if (z.length > 3) {
+				return z.map( baz = v =>
+					v > 3 ? v + y : baz( v * 4 )
+				);
+			}
+			else {
+				obj = [];
+
+				setTimeout( () =>
+					(obj.length = 1,
+						obj[0] = this.w)
+					, 100
+				);
+
+				return obj;
+			}
+		},
+	p = foo( 2 ),
+	list1 = [1,3,4],
+	list2 = list1.concat( 6 ),
+
+	list1 = p.call( { w: 42 }, list1 ),
+	list2 = p( list2 ),
+
+	setTimeout( 
+        () => console.log( list1[0] === list2.reduce( (s,v) => s + v, 0 ) ),
+        200
+	))
+)();
+(function IIFE_var_let(){
+    function bar(x){ return x+1;}
+    function foo(x, y){
+        let z;
+        try {
+            z = bar(x*2);   // we have to uncouple the declaration with the initialization (not the case with the var)
+        } catch(err) {
+
+        }
+    }
+}());
+        // default values and ... operator
+        const x = [1,2,3];
+        function bb(b){
+            b = null;
+        }
+        bb(x);
+
+        function foo(x){
+            //x = x || 42; // this is stupid because the 0 or '' value is falsified
+            x = x !== undefined ? x : 42;
+        }
+
+        function foo2(x = 42){
+
+        }
+
+        foo2.apply(null, [,]);
+
+        function bar(){
+            console.log("!");
+        }
+        function foo3(x = bar()){
+            // default param is lazy evaluated
+        }
+        foo3();//only now is invoked bar
+
+function required(x){
+            throw "Parameter" + x + "required";
+        }
+function foo4(x = required(), id = x) {
+            // default param to enforce some policy
+        }
+
+        var y = 11;
+        function foo5(y = 22, f = function(){return y;}){
+            var y = 55;// this gets ignored! in chrome
+            console.log(f());
+        }
+        foo5();
+
+        function foo6(){
+            var args = [].slice.call(arguments);
+            args.unshift(42);
+            bar.apply(null, args);
+        }
+
+        function foo7(...args){//here it gathers all arguments        
+            //rest operator
+            //better said the gather operator
+            args.unshift(42);
+            bar(...args);//spreads the array into its constituent parts
+        }
+
+        function foo8(...args){
+            bar(42, ...args);//even better
+        }
+
+        var z = [1,2,3];
+        var z2 = [4,5];
+        var z3 = [0].concat(z, z2, [6]);
+
+        var z6 = [1,2,3];
+        var z26 = [4,5];
+        var z36 = [0,...z6,...z26,6];//spreads them
+        function foo9(...args){
+            console.log(args, args.length);
+        }
+        foo9(...z36);//here are spread!
+        foo9(z36);//here is a single arg array
+        function foo10(x,y,...rest){
+            return rest;//we remove the first 2 params!
+        }
+        var log = console.log;
+        log(foo10(...z6,...z26));
+        //... can be used with iterables!
+
+        var str = "Hello";
+        var chars = [...str];//this is array as str.split!
+
+// function foo() { }
+
+// function bar() {
+// 	var a1 = [ 2, 4 ];
+// 	var a2 = [ 6, 8, 10, 12 ];
+
+// 	return foo();
+// }
+
+// console.log(
+// 	bar().join("") === "281012"
+// );
+
+
+        /////resolved
+        function foo222(c1,c2,c3,...c) { 
+            return [c1,...c];
+        }
+
+        function bar222() {
+            var a1 = [ 2, 4 ];
+            var a2 = [ 6, 8, 10, 12 ];
+
+            return foo222(...a1,...a2);
+        }
+
+        console.log(
+            bar222().join("") === "281012"
+        );
+
+        // function foo223(c1,...c2,c3) { //this is not allowed, spread operator must be the last
+        //     return [c1,c3];
+        // }
+
+        // destrcuturing
+        function foo1000(){
+            return [1,2,3];
+        }
+        var tmp = foo1000(),
+            a = tmp[0],
+            b = tmp[1];//this is destructuring through assignment (a bigger thing is imperatively destructured into tinier bits)
+
+            var [a,b,c] = foo1000();    // this is the ES6 destructuring !
+            log("c=",c);
+
+        function foo1001(){
+            return null;
+        }
+
+        var [a,
+        b=42,
+        c] = foo1001() || [];  //we guard against null array
+
+        function foo1002(){
+            return [1,undefined,3,4,5,6];
+        }
+        var [
+            a,
+            b=42,
+            c,
+            ...args //this gather a subarray as it is on left of the assignment
+        ] = foo1002();
+        log("args=",args);
+        log("...args=",...args);
+
+        var o = {};
+        [
+            o.a,
+            o.b = 42,
+            o.c,
+            ...o.args
+        ] = foo1002();
+        log(o);
+
+        var x1 = 10, y1 = 20;
+        [x1,y1] = [y1,x1];
+        log(x1, y1);
+
+        var a = [1,2,3];
+
+        [x2, y2, ...a] = [0, ...a, 4 ]; //on the right ... is doing spreading and on the left ... is doing gathering
+        log(a);
+        [ , , ...a ] = [0, ...a, 4 ]; 
+        log(a);
+
+        function foo1003(){
+            return [1,2,3,[4,5,6]];
+        }
+        [
+            a3,
+            b3,
+            c3,
+            ...args //args will be an array with one element the subarray [4,5,6] 
+        ] = foo1003();
+        log("args3", args);
+
+        {
+            [
+                a3,
+                b3,
+                c3,
+                [d3,,e3] //args will be an array with one element the subarray [4,5,6] 
+            ] = foo1003();
+            log(d3, e3);
+        }
+        log(d3, e3);    // so this destructuring is using global if not prefixing with var/let!
+
+        // object destructuring
+        function foo1004(){
+            return {a:1, b:2, c:3, d: 4, e:5, f :{
+                g: 6
+            } };
+        }
+
+        var {
+            a = 2,
+            b : b1004,
+            c,
+            e,
+            f: {
+                g
+            }
+        } = foo1004() || {};
+        log(a,b1004,c, e, g);
+
+        //object destructuring with named arguments
+        function foo1005({a, b = 2, c } = {}){
+            log("foo1005", a,b,c);
+        }
+        foo1005({
+            c: 3,
+            a: 1
+        });
+        foo1005();//no object arg passed
+        var defaults = {
+            method: "POST",
+            callback: function(){},
+            headers: {
+                "content-type": "text/plain"
+            }
+        };
+
+        var config = {
+            url: "http://some.url",
+            callback: foo,
+            headers: {
+                "x-requested-with": "foo"
+            }
+        }
+
+        {
+            let {
+                method = "POST",
+                url,
+                callback = defaults.callback,
+                headers: {
+                    "content-type": contentType = defaults.headers["content-type"],
+                    "x-requested-with": xRequestedWith
+                }
+            } = config;
+
+            config = {
+                method,
+                url,
+                callback,
+                headers: {
+                    "content-type": contentType,
+                    "x-requested-with": xRequestedWith
+                }
+            };
+        }
+// {
+//         function ajax(url,cb) {
+//             // fake ajax response:
+//             cb({
+//                 foo: 2,
+//                 baz: [ 6, 8, 10 ],
+//                 bam: {
+//                     qux: 12
+//                 }
+//             });
+//         }
+
+//         function check(data) {
+//             console.log(
+//                 56 === (
+//                     data.foo +
+//                     data.bar +
+//                     data.baz[0] + data.baz[1] + data.baz[2] +
+//                     data.bam.qux +
+//                     data.bam.qam
+//                 )
+//             );
+//         }
+
+//         var defaults = {
+//             foo: 0,
+//             bar: 4,
+//             bam: {
+//                 qux: 0,
+//                 qam: 14
+//             }
+//         };
+
+//         function response({
+//             foo = defaults.foo,
+//             bar = defaults.bar,
+//             baz,
+//             bam:{
+//                 qux = defaults.bam.qux,
+//                 qam = defaults.bam.qam
+//             }
+//         } = {}) {
+
+//             check({ //restruct obj
+
+//             });
+
+//         }
+
+//         ajax("http://fun.tld",response);
+// }
+
+var a = 1;
+var c = "hello";
+var obj = {
+    a,
+    b(){},   //concise method
+    "Hello World"(){
+
+    },
+    [c]: 42,        // computer properties like obj.c = 42;
+    [c.toUpperCase()](){},
+    [c+"fn"]() {},
+    *foo(){},       //concise generator
+    *[c+"gn"](){}   //computed concise generator
+
+    
+}
+    var myArr1 = [1,2,3,6,4];
+    var max = (arr) => {
+        var max = Number.MIN_SAFE_INTEGER;
+        arr.forEach(e => {
+            if(max < e){
+                max = e;
+            }
+        });
+
+        return max;
+    };
+    log("max=", max(myArr1));
+
+    var arrayExt = ((arr) => 
+        function innerFunc () {
+            var context = {
+                get max() {
+                    var max = Number.MIN_SAFE_INTEGER;
+                    arr.forEach(e => {
+                        if(max < e){
+                            max = e;
+                        }
+                    });
+                    return max;
+                },
+
+                add: (el) => {
+                    arr.push(+el);
+                    return innerFunc;
+                }
+            };
+
+            return context;
+        })(myArr1);
+
+    var arrayExtF = arrayExt;
+    log(arrayExtF().max);
+    arrayExtF = arrayExtF().add(14);
+    log(arrayExtF());
+    log(arrayExtF().max);
+    ///////////
+
+    var name = "Dan";
+    var orderNumber = "123";
+    var total = 319.756;
+
+    var msg = `Hello, ${name}, your 
+    order (#${orderNumber}) was $${total}.`; // string interpolation
+    log(msg);
+
+    function foo1006(strings, ...values){    // it will contain all string literals passed to the function!
+        // this is a tag function and it works like a macro/preprocessor
+        //return "I am evil";
+        var str = "";
+        for(var i = 0; i < strings.length; i += 1){ //strings will always have one more value than the values array
+            if(i > 0){
+                if(typeof values[i-1]=== 'number'){
+                    str += values[i-1].toFixed(2);
+                } else {
+                    str += values[i-1];
+                }
+            }
+
+            str += strings[i];
+        }
+
+        return str;
+    }
+
+    log(foo1006`Hello, ${name}, your \
+    order (#${orderNumber}) was $${total}.`);
+
+    function upper(strings,...values) {
+        var str = "";
+        for(var i = 0; i < strings.length; i += 1){ //strings will always have one more value than the values array
+            if(i > 0){
+                str += values[i-1].toUpperCase();
+            }
+
+            str += strings[i];
+        }
+
+        return str;
+    }
+
+var name = "kyle",
+	twitter = "getify",
+	classname = "es6 workshop";
+
+
+console.log(
+	upper`Hello ${name} (@${twitter}), welcome to the ${classname}!` ===
+	"Hello KYLE (@GETIFY), welcome to the ES6 WORKSHOP!"
+);
+
+    </script>
+</document>
