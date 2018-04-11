@@ -524,15 +524,129 @@ var obj = {
         return str;
     }
 
-var name = "kyle",
-	twitter = "getify",
-	classname = "es6 workshop";
+    var name = "kyle",
+        twitter = "getify",
+        classname = "es6 workshop";
 
 
-console.log(
-	upper`Hello ${name} (@${twitter}), welcome to the ${classname}!` ===
-	"Hello KYLE (@GETIFY), welcome to the ES6 WORKSHOP!"
-);
+    console.log(
+        upper`Hello ${name} (@${twitter}), welcome to the ${classname}!` ===
+        "Hello KYLE (@GETIFY), welcome to the ES6 WORKSHOP!"
+    );
 
+    log(Symbol.iterator, Symbol.toPrimitive);
+
+    var arr = [1,2,3];
+    var it = arr[Symbol.iterator]();
+    log(it.next()); // {value: 1, done: false}
+    log(it.next());
+    log(it.next());
+    log(it.next());
+
+    for(var v of arr){//equivalent with the above
+        log(v);
+    }
+    var str = "Hello";
+    for(var v of str){
+        log(v);
+    }
+
+    for(var key in str){    //the old enumeration
+        log(key);
+    }
+
+    [x1, y1, ...rest1] = [...str];
+    log(rest1);//l,l,o
+
+    var obj = {
+        [Symbol.iterator](){
+            var idx = this.start;
+
+            var it = {
+                next: () => {
+                    var v = this.values[idx];
+                    idx += 1;
+
+                    return { 
+                        value: v, 
+                        done: idx > this.end 
+                    };
+                }
+            };
+
+            return it;
+        },
+        values: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16],
+        start: 4,
+        end: 13
+    };
+
+    //we test our ugly custom iterator via ... which automatically uses iterators
+    var vals = [...obj];
+    log(vals);
+
+    function *main(){
+        console.log("hello");
+        yield 9;
+        console.log("world");
+    }
+
+    var it = main();
+    log('before yield');
+    log(it.next());
+    log(it.next());
+
+    for(var v of main()){
+        log(v);
+    }
+
+    var obj2 = {
+        *[Symbol.iterator](){
+            for(var i = this.start; i <= this.end; i += 1){
+                yield this.values[i];
+            }
+        },
+        values: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16],
+        start: 4,
+        end: 13
+    };
+
+    for(var v of obj2){ // or ... operator
+        log(v);
+    }
+
+    function *Iterator(start, end, step){
+            for(var i = start; i <= end; i += step){
+                yield i;
+            }
+        }
+
+    var numbers = {
+        *[Symbol.iterator]({
+            start = 0, 
+            step = 1, 
+            end = 100 
+            } = {}){
+            for(var i = start; i <= end; i += step){
+                yield i;
+            }
+        }
+    };
+
+    for(let num of numbers){
+        log(num);
+    }
+
+    for(let num of numbers[Symbol.iterator]({start: 6, end: 30, step: 4})){
+        log(num);
+    }
+
+    Number.prototype[Symbol.iterator] = function*(){
+        for(var i = 0; i <= this; i++){
+            yield i;
+        }
+    };
+
+    log([...8]);
     </script>
 </document>
