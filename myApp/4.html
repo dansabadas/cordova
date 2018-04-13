@@ -63,7 +63,7 @@
             console.log(name);
         });
 
-        /////////////
+        ///////////// 3
         var projection = function() {
             var newReleases = [
                 {
@@ -112,6 +112,7 @@
         }
 		log(projection());
 
+        // 4
         Array.prototype.map = function(projectionFunction) {
             var results = [];
             this.forEach(function(itemInArray) {
@@ -128,7 +129,8 @@
         };
 
         log(JSON.stringify([1,2,3].map(function(x) { return x + 1; })) === '[2,3,4]');
-		
+        
+        // 5
         var projection2 = function() {
             var newReleases = [
                 {
@@ -173,6 +175,7 @@
 
     log(projection2());
 
+        // 6
     var filtering = function() {
         var newReleases = [
             {
@@ -213,12 +216,13 @@
         // ------------ INSERT CODE HERE! -----------------------------------
         // Use forEach function to accumulate every video with a rating of 5.0
         // ------------ INSERT CODE HERE! -----------------------------------
-
+            
         return videos;
     }
 
     log(filtering());
 
+    // 7
     Array.prototype.filter = function(predicateFunction) {
         var results = [];
         this.forEach(function(itemInArray) {
@@ -228,10 +232,10 @@
             // Note: remember you can add items to the array using the array's
             // push() method.
             // ------------ INSERT CODE HERE! ----------------------------
-        var isTrue = predicateFunction(itemInArray);
-        if(isTrue){
-        results.push(itemInArray);
-        }
+            var isTrue = predicateFunction(itemInArray);
+            if(isTrue){
+                results.push(itemInArray);
+            }
         });
 
         return results;
@@ -239,6 +243,7 @@
 
     log(JSON.stringify([1,2,3].filter(function(x) { return x > 2})) === "[3]");
 
+    // 8
     var chaining = function() {
         var newReleases = [
             {
@@ -286,6 +291,7 @@
 
     log(chaining());
 
+    // 9
     var flatten = function() {
             var movieLists = [
                 {
@@ -349,6 +355,7 @@
 		
         log(flatten());
 
+        // 10.
         Array.prototype.concatAll = function() {
             var results = [];
             this.forEach(function(subArray) {
@@ -371,6 +378,7 @@
         log(err);
     }
 
+    // 11.
     var mapAndConcatAll =function() {
         var movieLists = [
                 {
@@ -421,12 +429,14 @@
         // Use map and concatAll to flatten the movieLists in a list of video ids.
         // ------------   INSERT CODE HERE!  -----------------------------------
 
-        return movieLists.map(ml => ml.videos).concatAll().map(video => video.id); // Complete this expression!
-
+        return movieLists
+            .map(ml => ml.videos.map(video => video.id))
+            .concatAll(); // Complete this expression!
     }
 
-    log(mapAndConcatAll());
+    log(11, mapAndConcatAll());
 
+    // 12.
     var idTitleAndOneBoxArt = function() {
         var movieLists = [
                 {
@@ -520,9 +530,8 @@
             .concatAll()
             .concatAll();
              // Complete this expression!
-
     }
 
-    log(idTitleAndOneBoxArt());
+    log(12, idTitleAndOneBoxArt());
     </script>
 </html>
