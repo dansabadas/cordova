@@ -590,7 +590,7 @@
             var bus = reverse(sub);
             log(bus(3,2));
 
-            //11. write a func compuseu that takes two unary functions and returns a unary func that calls them both
+            //11. write a func composeu that takes two unary functions and returns a unary func that calls them both
             function composeu(unaryFunc1, unaryFunc2){
                 return function(a){
                     return unaryFunc2(unaryFunc1(a));
@@ -625,7 +625,7 @@
             log(mul_ltd(3, 4));
             log(mul_ltd(3, 4));
 
-            //14. write a 'from' func that produces a generator that will produce produce a serioes of values
+            //14. write a 'from' func that produces a generator that will produce a serioes of values
             function from(seed){
                 return function(){
                     return seed++;
