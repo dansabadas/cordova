@@ -1,7 +1,19 @@
 <html>
+    <head>
+    </head>
     <body>
-        <image id="image1"></image>
+        <image id="image1" src="https://www.gstatic.com/webp/gallery3/1.png"></image>
+        <button id="button1">Click me!</button>
+        <input id="textbox"></input>
+        <textarea id="results"></textarea>
     </body>
+    <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/5.5.10/Rx.js"></script>
+    <!-- <script src="https://npmcdn.com/@reactivex/rxjs@5.0.0-beta.3/dist/global/Rx.umd.js"></script> -->
+
+    <!-- <script src="https://raw.githubusercontent.com/Reactive-Extensions/RxJS/master/dist/rx.all.js"></script> -->
+    <!-- <script src="https://unpkg.com/@reactivex/rxjs@5.5.10/dist/global/Rx.js"></script> -->
     <script>
         var log = console.log;
         [1,2,3].forEach(x=> log(x));
@@ -29,8 +41,8 @@
         }, 500);  
 
         //convert Events to Observables
-        Observable = {};
-        Observable.fromEvent = function(dom, eventName){
+        Observable1 = {};
+        Observable1.fromEvent = function(dom, eventName){
             // returning Observable object
             return {
                 forEach: function(observer){
@@ -48,9 +60,9 @@
         };
 
         var getElementDrags = elmt => {
-            elmt.mouseDowns = Observable.fromEvent(elmt, "mousedown");
-            elmt.mouseUps = Observable.fromEvent(elmt, "mouseup");
-            elmt.mouseMoves = Observable.fromEvent(elmt, "mousemove");
+            elmt.mouseDowns = Observable1.fromEvent(elmt, "mousedown");
+            elmt.mouseUps = Observable1.fromEvent(elmt, "mouseup");
+            elmt.mouseMoves = Observable1.fromEvent(elmt, "mousemove");
 
             return elmt.mouseDowns.map(mouseDown => elmt.mouseMoves);
         };
@@ -551,7 +563,7 @@
 
 	log(13, JSON.stringify(allWords) === '["cero","rien","zero","uno","un","one","dos","deux","two"]');
 
-
+    // 14.
     var concatMap = function() {
         var movieLists = [
                 {
@@ -634,8 +646,32 @@
     };
 	log(14, concatMap());
 
-    // [1,2,3].reduce(function(accumulatedValue, currentValue) { return accumulatedValue + currentValue; }); === [6];
-    // [1,2,3].reduce(function(accumulatedValue, currentValue) { return accumulatedValue + currentValue; }, 10); === [16];
+    [1,2,3].reduce(function(accumulatedValue, currentValue) { return accumulatedValue + currentValue; }); //=== [6];
+    [1,2,3].reduce(function(accumulatedValue, currentValue) { return accumulatedValue + currentValue; }, 10); //=== [16];
+
+    //15.
+    var forEachFind = function() {
+        var boxarts = [
+                { width: 200, height: 200, url: "http://cdn-0.nflximg.com/images/2891/Fracture200.jpg" },
+                { width: 150, height: 200, url: "http://cdn-0.nflximg.com/images/2891/Fracture150.jpg" },
+                { width: 300, height: 200, url: "http://cdn-0.nflximg.com/images/2891/Fracture300.jpg" },
+                { width: 425, height: 150, url: "http://cdn-0.nflximg.com/images/2891/Fracture425.jpg" }
+            ],
+            currentSize,
+            maxSize = -1,
+            largestBoxart;
+
+        boxarts.forEach(function(boxart) {
+            currentSize = boxart.width * boxart.height;
+            if (currentSize > maxSize) {
+                largestBoxart = boxart;
+                maxSize = currentSize;
+            }
+        });
+
+        return largestBoxart;
+    }
+    log(15, forEachFind());
 
     // 16.
     Array.prototype.reduce = function(combiner, initialValue) {
@@ -872,10 +908,10 @@
 
             for(counter = 0; counter < Math.min(videos.length, bookmarks.length); counter++) {
                 // Insert code here to create a {videoId, bookmarkId} pair and add it to the videoIdAndBookmarkIdPairs array.
-            videoIdAndBookmarkIdPairs.push({
-            videoId: videos[counter].id,
-            bookmarkId: bookmarks[counter].id
-            });
+                videoIdAndBookmarkIdPairs.push({
+                    videoId: videos[counter].id,
+                    bookmarkId: bookmarks[counter].id
+                });
             }
 
             return videoIdAndBookmarkIdPairs;
@@ -1189,5 +1225,260 @@ var videosBookmarsCombineZip = function() {
     nasdaqPricesObservable(
         [{name: 'MSFT'}, {name: 'APPL'}, {name: 'MSFT'}],
         log);
+
+    //28. 
+    var classicObserver = function(button) {
+        // the button click handler
+        var handler = function(ev) {
+            // Unsubscribe from the button event.
+            button.removeEventListener("click", handler);
+
+            alert("Button was clicked. Unsubscribing from event.");
+        };
+
+        // add the button click handler
+        button.addEventListener("click", handler);
+    }
+		
+    var button = document.getElementById("button1");
+    classicObserver(button);
+
+    //29.
+    // https://github.com/ReactiveX/rxjs
+    // https://unpkg.com/rxjs@rc/bundles/rxjs.umd.min.js
+    var subscribingButtonClickEvent = function(button) {
+        var buttonClicks = Observable.fromEvent(button, "click");
+
+        // In the case of an Observable, forEach returns a subscription object.
+        var subscription =
+            buttonClicks.
+                forEach(function(clickEvent) {
+                    alert("Button was clicked. Stopping Traversal.");
+
+                    // Stop traversing the button clicks
+                    subscription.dispose();
+                });
+    };
+
+    //30. 
+    var observableClick = function(button) {
+        var buttonClicks = Observable.fromEvent(button, "click");
+
+        // Use take() to listen for only one button click
+        // and unsubscribe.
+        buttonClicks.
+        take(1).
+            // Insert take() call here
+            forEach(function(clickEvent) {
+                alert("Button was clicked once. Stopping Traversal.");
+            });
+    };
+
+    //31.
+    var takeUntilObservable = function(pricesNASDAQ, printRecord, stopButton) {
+        var stopButtonClicks = Observable.fromEvent(stopButton, 'click'); // ----- To finish this expression, use Observable.fromEvent to convert the "click" event on the stop button to an Observable
+            microsoftPrices =
+                pricesNASDAQ.
+                    filter(function(priceRecord) {
+                        return priceRecord.name === "MSFT";
+                    }).
+        takeUntil(stopButtonClicks);
+                    // ----- To finish this expression, use takeUntil to complete the sequence when stopButtonClicks fires.
+
+        microsoftPrices.
+            forEach(function(priceRecord) {
+                printRecord(priceRecord);
+            });
+    };
+
+    var observableDrags = function(){
+        var drags = element.mouseDowns
+            .map(mouseDown => 
+                element.mouseMoves
+                    .takeUntil(element.mouseUps))
+            .concatAll();
+
+        drags.forEach(mouseDrag => {
+            log(mouseDrag);
+        });
+    };
+
+    var handle = setTimeout(()=> log('hi'), 2000);
+    clearTimeout(handle);
+
+    var handler2 = () => console.log('hi');
+    document.addEventListener('click', handler2);
+    document.removeEventListener('click', handler2);
+
+    var observer = {
+        onNext(x) { log(x) },
+        onError(e) { console.error(e) },
+        onCompleted() { log('done') }
+    };
+
+    var timeout = function(time) {
+        return {
+            forEach: (observer) => {
+                var handle = setTimeout(()=> {
+                    observer.onNext(undefined);
+                    observer.onCompleted();
+                }, time);
+
+                return {
+                    dispose: () => {
+                        clearTimeout(handle);
+                    }
+                };
+            }
+        };
+    };
+    
+    var tmo1 = timeout(5000);  // timeout just creates an observable
+    tmo1.forEach({
+        onNext: (v) => log(tmo1, 'timeout'),
+        onCompleted() { log('done') }
+    });
+
+    var fromEvent = function(dom, eventName) {
+        return {
+            forEach: (observer) => {
+                var handle = (e)=> {
+                    observer.onNext(e);
+                };
+                dom.addEventListener(eventName, handler);
+                
+                // subscription object
+                return {
+                    dispose: () => {
+                        dom.removeEventListener(eventName, handler);
+                    }
+                };
+            }
+        };
+    };
+
+        var getElementDrags2 = elmt => {
+            elmt.mouseDowns = Rx.Observable.fromEvent(elmt, "mousedown");
+            elmt.mouseUps = Rx.Observable.fromEvent(elmt, "mouseup");
+            elmt.mouseMoves = Rx.Observable.fromEvent(elmt, "mousemove");
+
+            return elmt.mouseDowns.map(mouseDown => elmt.mouseMoves);
+        };
+        var image = document.getElementById("image1");
+        //getElementDrags2(image).forEach({ onNext: e => log(e) }); // this still does not work
+
+        // const source = Rx.Observable.interval(1000);
+        // //sample last emitted value from source every 2s 
+        // const example = source.sample(Rx.Observable.interval(2000));
+        // //output: 2..4..6..8..
+        // const subscribe = example.subscribe(val => console.log(val));
+        // https://www.learnrxjs.io/operators/filtering/sample.html
+        // http://jsbin.com/kovevadewi/edit?html,js,console
+
+        var textbox = document.getElementById('textbox');
+        // textbox.addEventListener('keypress', (e)=> {
+        //     log(e.keyCode);  // this is the classic mode
+        // });
+
+        var Observable = Rx.Observable;
+        // var keypresses = Observable.fromEvent(textbox, 'keypress');
+        // keypresses.forEach(e => log(e.keyCode));
+
+        var searchWikipedia = function(term){
+           // var url = 'http://en.wikipedia.org/w/api.php?action=opensearch&format=json&search' + encodeURIComponent(term) + 'callback=?';
+            var url = 'https://en.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch=' + encodeURIComponent(term) + '&prop=extracts&exlimit=10&exintro&exsentences=2&format=json&callback=?';
+            $.getJSON(url, (data) => log(data.query.pages));
+        };
+        searchWikipedia('Terminator');
+
+        var jsonNetflix = function() {
+            $.ajaxSetup({
+                headers : {
+                    "Access-Control-Allow-Credentials": true,
+                    "Access-Control-Allow-Methods": "GET,HEAD,OPTIONS,POST,PUT",
+                    "Access-Control-Allow-Headers": "Access-Control-Allow-Origin, Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers",
+                    'Access-Control-Allow-Origin' : '*'
+                }
+            });
+            $.getJSON(
+                "http://api-global.netflix.com/queue",
+                {
+                    success: function(json) {
+                        console.log(json);
+                    },
+                    error: function(ex) {
+                        alert("There was an error.")
+                    }
+                });
+        };
+        //jsonNetflix();
+
+        var getWikipediaSearchResults1 = function(term) {
+            return {
+                forEach: (observer) => {
+                    var canceled = false;
+                    var url = 'https://en.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch=' + encodeURIComponent(term) + '&prop=extracts&exlimit=10&exintro&exsentences=2&format=json&callback=?';
+                    $.getJSON(url, (data) => {
+                        if(!canceled)
+                        {
+                            observer.onNext(data.query.pages);
+                            observer.onCompleted();
+                        }
+                    });
+
+                    return {
+                        dispose: function(){
+                            canceled = true;
+                        }
+                    };
+                }
+            };
+        };
+
+        var getWikipediaSearchResults2 = function(term) {
+            return Observable.create(function forEach(observer) {
+                var canceled = false;
+                var url = 'https://en.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch=' + encodeURIComponent(term) + '&prop=extracts&exlimit=10&exintro&exsentences=2&format=json&callback=?';
+                $.getJSON(url, (data) => {
+                    if(!canceled)
+                    {
+                        observer.next(data.query.pages);
+                        observer.complete();
+                    }
+                });
+
+                return function dispose(){
+                    canceled = true;
+                };
+            });
+        };
+
+        getWikipediaSearchResults1('Terminator').forEach({
+            onNext: (results) => {
+                log('getWikipediaSearchResults1', results);
+            },
+            onCompleted: ()=> log('done')
+        });
+        getWikipediaSearchResults2('Terminator')
+            .forEach(function(results) {
+                log('getWikipediaSearchResults2', results);
+            });
+
+        var results = document.getElementById('results');
+        var keypresses2 = Observable.fromEvent(textbox, 'keypress');
+        
+        // var searchResultSets = keypresses2
+        //     .throttleTime(20)
+        //     .map(key => getWikipediaSearchResults2(textbox.value))
+        //     //.mergeAll()     //we get ALL exactly in the order they arrive => we don't want it!
+        //     //.concat()       //
+        //     .switchLatest();  //only listens to one (latest) inner observable at a time. usually in UI we use SwitchLatest
+        //     searchResultSets.subscribe(function(resultSet){ // instead of forEach
+        //         results.value = JSON.stringify(resultSet);
+        //     });
+
+            var clicks = Rx.Observable.fromEvent(document, 'click');
+            var result = clicks.throttleTime(1000).take(10);
+            result.subscribe(x => console.log(x));
     </script>
 </html>
