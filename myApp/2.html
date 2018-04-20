@@ -462,7 +462,7 @@
                 
                 setTimeout(step, 100);
             }
-
+//////////////////////////////////////////
             function gizmo(id){
                 return {
                     toString: function() {
@@ -519,6 +519,8 @@
             log(mul(3,4));
 
             //4. closure with 1 arg
+            //write a func identityf that takes an argument
+            // and returns a function that returns that argument
             function identityf(o){
                 return function(){
                     return o;
@@ -526,7 +528,7 @@
             }
 
             var three = identityf(3);
-            log(three());
+            log(three()); // 3
 
             //5. closure with 2 args
             function addf(a){

@@ -1568,5 +1568,104 @@ var videosBookmarsCombineZip = function() {
             .map(x => x.pageX + "px")
             .take(10);
         buttonclicks.forEach(x => log("button-click", x));
+
+        //////////jQuery
+        // 1. implement the mix-in extend    
+        (function(){
+            $ = function(selector){};   // this is the most important but first the utility functions!
+            $.extend = function(target, object){           
+            }
+        }());
+        log($);
+        //1. solved
+        (function(){
+            $ = function(selector){};
+            $.extend = function(target, object){   
+                for(var property in object){
+                    target[property] = object[property];
+                }
+
+                return target;
+            }
+        }());
+        log($.extend({id: 2}, {name: 'dan'}));
+
+        //2.implement isArray and verify if an object is in fact array
+        (function(){
+            $ = function(selector){};
+            $.extend = function(target, object){   
+                for(var property in object){
+                    target[property] = object[property];
+                }
+
+                return target;
+            }
+            $.isArray = function(objectToCheck){} //$.isArray([]) === true;
+        }());
+        //2. solved
+        (function(){
+            $ = function(selector){};
+            $.extend = function(target, object){   
+                for(var property in object){
+                    target[property] = object[property];
+                }
+
+                return target;
+            }
+            $.isArray = function(objectToCheck){
+                return Object.prototype.toString.call(objectToCheck) === '[object Array]';
+            }           
+        }());
+
+        log($.isArray([]),  Object.prototype.toString.call([]), [].toString());
+
+        //3. implement isArrayLike
+        (function(){
+            $ = function(selector){};
+            $.extend = function(target, object){   
+                for(var property in object){
+                    target[property] = object[property];
+                }
+
+                return target;
+            }
+            $.isArray = function(objectToCheck){
+                return Object.prototype.toString.call(objectToCheck) === '[object Array]';
+            }   
+
+            var isArrayLike = function(objectToCheck)   {
+                // isArrayLike([1,2,3]) === true
+                // isArrayLike(arguments) === true
+                // isArrayLike(document.getElementsByTagName('div')) === true 
+            }     
+        }());
+
+        //3. solved
+        (function(){
+            $ = function(selector){};
+            $.extend = function(target, object){   
+                for(var property in object){
+                    target[property] = object[property];
+                }
+
+                return target;
+            }
+            $.isArray = function(objectToCheck){
+                return Object.prototype.toString.call(objectToCheck) === '[object Array]';
+            }   
+
+            var isArrayLike = function(objectToCheck) {
+                // duck-typing (quack)
+                if (typeof objectToCheck.length === number) {
+                    if(objectToCheck.length === 0) {
+                        return true;
+                    } else if(objectToCheck.length > 0) {
+                        return objectToCheck.length-1 in objectToCheck
+                    }
+                }
+                
+                return false;
+            }     
+        }());
     </script>
 </html>
