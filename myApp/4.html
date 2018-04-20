@@ -41,23 +41,23 @@
         }, 500);  
 
         //convert Events to Observables
-        Observable1 = {};
-        Observable1.fromEvent = function(dom, eventName){
-            // returning Observable object
-            return {
-                forEach: function(observer){
-                    var handler = (e) => observer.onNext(e);
-                    dom.addEventListener(eventName, handler);
+        // Observable1 = {};
+        // Observable1.fromEvent = function(dom, eventName){
+        //     // returning Observable object
+        //     return {
+        //         forEach: function(observer){
+        //             var handler = (e) => observer.onNext(e);
+        //             dom.addEventListener(eventName, handler);
 
-                    // returning subscription object
-                    return {
-                        dispose: function(){
-                            dom.removeEventListener(eventName, handler);
-                        }
-                    };
-                }
-            };
-        };
+        //             // returning subscription object
+        //             return {
+        //                 dispose: function(){
+        //                     dom.removeEventListener(eventName, handler);
+        //                 }
+        //             };
+        //         }
+        //     };
+        // };
 
         var getElementDrags = elmt => {
             elmt.mouseDowns = Observable1.fromEvent(elmt, "mousedown");
@@ -1478,7 +1478,95 @@ var videosBookmarsCombineZip = function() {
         //     });
 
             var clicks = Rx.Observable.fromEvent(document, 'click');
-            var result = clicks.throttleTime(1000).take(10);
+            var result = clicks.throttleTime(1000).take(5);
             result.subscribe(x => console.log(x));
+
+        var Observable1 = function(forEach){
+            this._forEach = forEach;
+        };
+
+        Observable1.prototype = {
+            forEach: function(onNext, onError, onCompleted){
+                if(typeof onNext === "function"){
+                    return this._forEach({
+                        onNext: onNext,
+                        onError: onError || function(){},
+                        onCompleted: onCompleted || function(){}
+                    });
+                } else {
+                    return this._forEach(onNext);
+                }
+            },
+            map: function(projectionFunction){
+                var context = this;
+                return new Observable1(function forEach(observer){
+                    return context.forEach(
+                        x => observer.onNext(projectionFunction(x)),    // or function onNext()...
+                        function onError(e) {  observer.onError(e); },
+                        function onCompleted() { observer.onCompleted(); }
+                    )
+                });
+            },
+            filter: function(testFunction){
+                var context = this;
+                return new Observable1(function forEach(observer){
+                    return context.forEach(
+                        x => {
+                            if(testFunction(x))
+                            {
+                                observer.onNext(x);
+                            }
+                        },    // or function onNext()...
+                        function onError(e) {  observer.onError(e); },
+                        function onCompleted() { observer.onCompleted(); }
+                    )
+                });
+            },
+            take: function(maxNum){
+                var context = this;
+                return new Observable1(function forEach(observer){
+                    var subscription = context.forEach(
+                        x => {
+                            if(maxNum > 0)
+                            {
+                                observer.onNext(x);
+                                maxNum -= 1;
+                            } else {
+                                subscription.dispose();
+                                observer.onCompleted();
+                            }
+                        },    // or function onNext()...
+                        function onError(e) {  observer.onError(e); },
+                        function onCompleted() { observer.onCompleted(); }
+                    );
+                });
+            }
+        };
+
+        Observable1.fromEvent = function(dom, eventName){
+            return new Observable1(function forEachBlaBla(observer1){
+                var handler = (e) => observer1.onNext(e);
+                dom.addEventListener(eventName, handler);
+
+                // subscription
+                return {
+                    dispose: () => {
+                        dom.removeEventListener(eventName, handler);
+                    }
+                };
+            });
+        };
+        var obs1 = new Observable1(function forEach(observer){
+
+        });
+        var clicks2 = Observable1.fromEvent(document, 'click');
+        var subscription = clicks2.forEach((e)=>log("clicks2", e));
+        setTimeout(() => subscription.dispose(), 8000);
+
+        var buttonclicks = Observable1.fromEvent(button, "click")
+            .filter(x => x.pageX < 425)
+            .map(x => x.pageX + "px")
+            .take(10);
+        buttonclicks.forEach(x => log("button-click", x));
     </script>
 </html>
