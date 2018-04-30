@@ -1,0 +1,591 @@
+<html>
+        <head>
+        </head>
+    <body>
+        <ul id="breeds">
+            <li><a href="#doberman">Doberman</a></li>
+            <li><a href="#beagles">Beagles</a></li>
+            <li><a href="#boxer">Boxer</a></li>
+        </ul>
+        <input type="text" value="some text"></input>
+        <script>
+            var log = console.log;
+                    //////////jQuery
+        // 1. implement the mix-in extend    
+        (function(){
+            $ = function(selector){};   // this is the most important but first the utility functions!
+            $.extend = function(target, object){           
+            }
+        }());
+        log($);
+        //1. solved
+        (function(){
+            $ = function(selector){};
+            $.extend = function(target, object){   
+                for(var property in object){
+                    target[property] = object[property];
+                }
+
+                return target;
+            }
+        }());
+        log($.extend({id: 2}, {name: 'dan'}));
+
+        //2.implement isArray and verify if an object is in fact array
+        (function(){
+            $ = function(selector){};
+            $.extend = function(target, object){   
+                for(var property in object){
+                    target[property] = object[property];
+                }
+
+                return target;
+            }
+            $.isArray = function(objectToCheck){} //$.isArray([]) === true;
+        }());
+        //2. solved
+        (function(){
+            $ = function(selector){};
+            $.extend = function(target, object){   
+                for(var property in object){
+                    target[property] = object[property];
+                }
+
+                return target;
+            }
+            $.isArray = function(objectToCheck){
+                return Object.prototype.toString.call(objectToCheck) === '[object Array]';
+            }           
+        }());
+
+        log($.isArray([]),  Object.prototype.toString.call([]), [].toString());
+
+        //3. implement isArrayLike
+        (function(){
+            $ = function(selector){};
+            $.extend = function(target, object){   
+                for(var property in object){
+                    target[property] = object[property];
+                }
+
+                return target;
+            }
+            $.isArray = function(objectToCheck){
+                return Object.prototype.toString.call(objectToCheck) === '[object Array]';
+            }   
+
+            var isArrayLike = function(objectToCheck)   {
+                // isArrayLike([1,2,3]) === true
+                // isArrayLike(arguments) === true
+                // isArrayLike(document.getElementsByTagName('div')) === true 
+            }     
+        }());
+
+        //3. solved
+        (function(){
+            $ = function(selector){};
+            $.extend = function(target, object){   
+                for(var property in object){
+                    target[property] = object[property];
+                }
+
+                return target;
+            }
+            $.isArray = function(objectToCheck){
+                return Object.prototype.toString.call(objectToCheck) === '[object Array]';
+            }   
+
+            var isArrayLike = function(objectToCheck) {
+                // duck-typing (quack)
+                if (typeof objectToCheck.length === number) {
+                    if(objectToCheck.length === 0) {
+                        return true;
+                    } else if(objectToCheck.length > 0) {
+                        return objectToCheck.length-1 in objectToCheck
+                    }
+                }
+                
+                return false;
+            }     
+        }());
+        
+        //4. create each such that
+        //$.each([1,2,3], (i, v) => log(i, v));
+        //$.each({"foo1": "bar1", foo2: "bar2"}, (p, v) => log(p, v));
+
+        //4. solved
+        (function(){
+            $ = function(selector){};
+            $.extend = function(target, object){   
+                for(var property in object){
+                    target[property] = object[property];
+                }
+
+                return target;
+            };
+            // $.isArray = function(objectToCheck){
+            //     return Object.prototype.toString.call(objectToCheck) === '[object Array]';
+            // }   
+            
+            $.extend($,{
+                isArray: function(objectToCheck){
+                    return Object.prototype.toString.call(objectToCheck) === '[object Array]';
+                },
+                each: function(collection, callback){
+                    if(isArrayLike(collection)){    // why?
+                        for(var i = 0; i < collection.length; i += 1){
+                            var value = collection[i];
+                            callback.call(value, i, value);
+                        }
+                    } else {
+                        for(var prop in collection){
+                            if(collection.hasOwnProperty(prop)){    // why?
+                                var value = collection[prop];
+                                callback.call(value, prop, value);
+                            }
+                        }
+                    }
+
+                    return collection;
+                }
+            });
+
+            var isArrayLike = function(objectToCheck) {
+                // duck-typing (quack)
+                if (typeof objectToCheck.length === "number") {
+                    if(objectToCheck.length === 0) {
+                        return true;
+                    } else if(objectToCheck.length > 0) {
+                        return objectToCheck.length-1 in objectToCheck
+                    }
+                }
+                
+                return false;
+            }     
+        }());
+
+        $.each([1,2,3], (i, v) => log(i, v));
+        $.each({"foo1": "bar1", foo2: "bar2"}, (p, v) => log(p, v));
+        
+        //5. makeArray
+        //$.makeArray(document.body.childNodes) => will convert-transform the DOM list into an array!
+
+        //5. solved
+        (function(){
+            $ = function(selector){};
+            $.extend = function(target, object){   
+                for(var property in object){
+                    target[property] = object[property];
+                }
+
+                return target;
+            };
+            // $.isArray = function(objectToCheck){
+            //     return Object.prototype.toString.call(objectToCheck) === '[object Array]';
+            // }   
+            
+            $.extend($,{
+                isArray: function(objectToCheck){
+                    return Object.prototype.toString.call(objectToCheck) === '[object Array]';
+                },
+                each: function(collection, callback){
+                    if(isArrayLike(collection)){    // why?
+                        for(var i = 0; i < collection.length; i += 1){
+                            var value = collection[i];
+                            callback.call(value, i, value);
+                        }
+                    } else {
+                        for(var prop in collection){
+                            if(collection.hasOwnProperty(prop)){    // why?
+                                var value = collection[prop];
+                                callback.call(value, prop, value);
+                            }
+                        }
+                    }
+
+                    return collection;
+                },
+                makeArray: function(collection){
+                    var array = [];
+                    $.each(collection, function(i, v){
+                        array.push(v);
+                    });
+                    return array;
+                }
+            });
+
+            var isArrayLike = function(objectToCheck) {
+                // duck-typing (quack)
+                if (typeof objectToCheck.length === "number") {
+                    if(objectToCheck.length === 0) {
+                        return true;
+                    } else if(objectToCheck.length > 0) {
+                        return objectToCheck.length-1 in objectToCheck
+                    }
+                }
+                
+                return false;
+            }     
+        }());
+
+        //6. $.proxy(fn, context)
+        // take a function and returns a new one that calls the original fn with a particular context
+
+        var dog = {
+            name1: 'fido',
+            speak: function(words){
+                return this.name1 + ' says ' + words;
+            }
+        };
+        var speak = dog.speak;
+        log(speak("somethig"));
+        // var speak = $.proxy(dog.speak, dog);
+
+        //6. resolved            
+        (function(){
+            $ = function(selector){};
+            $.extend = function(target, object){   
+                for(var property in object){
+                    target[property] = object[property];
+                }
+
+                return target;
+            };
+            
+            $.extend($,{
+                isArray: function(objectToCheck){
+                    return Object.prototype.toString.call(objectToCheck) === '[object Array]';
+                },
+                each: function(collection, callback){
+                    if(isArrayLike(collection)){    // why?
+                        for(var i = 0; i < collection.length; i += 1){
+                            var value = collection[i];
+                            callback.call(value, i, value);
+                        }
+                    } else {
+                        for(var prop in collection){
+                            if(collection.hasOwnProperty(prop)){    // why?
+                                var value = collection[prop];
+                                callback.call(value, prop, value);
+                            }
+                        }
+                    }
+
+                    return collection;
+                },
+                makeArray: function(collection){
+                    var array = [];
+                    $.each(collection, function(i, v){
+                        array.push(v);
+                    });
+                    return array;
+                },
+                proxy: function(fn, context){
+                    return function(){
+                        return fn.apply(context, arguments);    // with call it does not work!
+                    }
+                }
+            });
+
+            var isArrayLike = function(objectToCheck) {
+                // duck-typing (quack)
+                if (typeof objectToCheck.length === "number") {
+                    if(objectToCheck.length === 0) {
+                        return true;
+                    } else if(objectToCheck.length > 0) {
+                        return objectToCheck.length-1 in objectToCheck
+                    }
+                }
+                
+                return false;
+            }     
+        }());
+
+        var dog = {
+            name1: 'fido',
+            speak: function(words){
+                return this.name1 + ' says ' + words;
+            }
+        };
+       var speakProxy = $.proxy(dog.speak, dog);
+       log(speakProxy());
+       log(speakProxy('Whoof'));
+
+       //NodeList = [document.getElementsByTagName('li')]
+       //7. create a function named '$' that takes a selector as an argument, and
+       // returns an array-like object that contains all selected elements from the DOM       
+       
+       // var breeds = $('#breeds');//select by id
+       //breeds.length === 1
+       //breeds[0] => the DOM element
+
+       //7. solved
+       (function(){
+            $ = function(selector){
+                if(!(this instanceof $)){   // instead of this === window (also do not pollute the context)
+                    return new $(selector);
+                }
+
+                var nodeList = document.querySelectorAll(selector);    //NodeList
+                for(var i = 0; i < nodeList.length; i+=1){
+                    this[i] = nodeList[i];
+                }
+
+                this.length = nodeList.length;
+            };
+            $.extend = function(target, object){   
+                for(var property in object){
+                    target[property] = object[property];
+                }
+
+                return target;
+            };
+            
+            $.extend($,{
+                isArray: function(objectToCheck){
+                    return Object.prototype.toString.call(objectToCheck) === '[object Array]';
+                },
+                each: function(collection, callback){
+                    if(isArrayLike(collection)){    // why?
+                        for(var i = 0; i < collection.length; i += 1){
+                            var value = collection[i];
+                            callback.call(value, i, value);
+                        }
+                    } else {
+                        for(var prop in collection){
+                            if(collection.hasOwnProperty(prop)){    // why?
+                                var value = collection[prop];
+                                callback.call(value, prop, value);
+                            }
+                        }
+                    }
+
+                    return collection;
+                },
+                makeArray: function(collection){
+                    var array = [];
+                    $.each(collection, function(i, v){
+                        array.push(v);
+                    });
+                    return array;
+                },
+                proxy: function(fn, context){
+                    return function(){
+                        return fn.apply(context, arguments);    // with call it does not work!
+                    }
+                }
+            });
+
+            var isArrayLike = function(objectToCheck) {
+                if (typeof objectToCheck.length === "number") {
+                    if(objectToCheck.length === 0) {
+                        return true;
+                    } else if(objectToCheck.length > 0) {
+                        return objectToCheck.length-1 in objectToCheck
+                    }
+                }
+                
+                return false;
+            }     
+        }());
+        var breeds = $('#breeds');//select by id
+       log(breeds.length === 1);
+       log(breeds[0]);
+
+       //8. add an HTML method to get/set the innerHtml of the selected elements
+       // var dogs = $('#breeds li') -> 3 LIs
+       //dogs.html('<div>All Dogs</div>')
+       // dogs.html() => returns the inner HTML of the first li
+
+       //8. solved
+       (function(){
+            $ = function(selector){
+                if(!(this instanceof $)){   // instead of this === window
+                    return new $(selector);
+                }
+
+                var nodeList = document.querySelectorAll(selector);    //NodeList
+                for(var i = 0; i < nodeList.length; i+=1){
+                    this[i] = nodeList[i];
+                }
+
+                this.length = nodeList.length;
+            };
+
+            $.extend = function(target, object){   
+                for(var property in object){
+                    target[property] = object[property];
+                }
+
+                return target;
+            };
+            
+            $.extend($.prototype, {
+                html: function(newHtml){
+                    if(arguments.length){
+                        //do set innerHTML for each element in $
+                        return $.each(this, function(i, el){
+                            el.innerHTML = newHtml;
+                        });
+                    } else {
+                        // do get this[0] inner HTML
+                        return this[0] && this[0].innerHTML;
+                    }
+                }
+            });
+            $.extend($,{
+                isArray: function(objectToCheck){
+                    return Object.prototype.toString.call(objectToCheck) === '[object Array]';
+                },
+                each: function(collection, callback){
+                    if(isArrayLike(collection)){    // why?
+                        for(var i = 0; i < collection.length; i += 1){
+                            var value = collection[i];
+                            callback.call(value, i, value);
+                        }
+                    } else {
+                        for(var prop in collection){
+                            if(collection.hasOwnProperty(prop)){    // why?
+                                var value = collection[prop];
+                                callback.call(value, prop, value);
+                            }
+                        }
+                    }
+
+                    return collection;
+                },
+                makeArray: function(collection){
+                    var array = [];
+                    $.each(collection, function(i, v){
+                        array.push(v);
+                    });
+                    return array;
+                },
+                proxy: function(fn, context){
+                    return function(){
+                        return fn.apply(context, arguments);    // with call it does not work!
+                    }
+                }
+            });
+
+            var isArrayLike = function(objectToCheck) {
+                if (typeof objectToCheck.length === "number") {
+                    if(objectToCheck.length === 0) {
+                        return true;
+                    } else if(objectToCheck.length > 0) {
+                        return objectToCheck.length-1 in objectToCheck
+                    }
+                }
+                
+                return false;
+            }     
+        }());
+
+        var dogs = $('#breeds li');
+        dogs.html('<div>All Dogs</div>');
+        log(dogs.html());
+
+        //9. implement the val() function
+        //$('input').val() => some text
+        //$('input').val('new text')
+
+        //9. solved
+       (function(){
+            $ = function(selector){
+                if(!(this instanceof $)){   // instead of this === window
+                    return new $(selector);
+                }
+
+                var nodeList = document.querySelectorAll(selector);    //NodeList
+                for(var i = 0; i < nodeList.length; i+=1){
+                    this[i] = nodeList[i];
+                }
+
+                this.length = nodeList.length;
+            };
+
+            $.extend = function(target, object){   
+                for(var property in object){
+                    target[property] = object[property];
+                }
+
+                return target;
+            };
+            
+            $.extend($.prototype, {
+                html: function(newHtml){
+                    if(arguments.length){
+                        //do set innerHTML for each element in $
+                        return $.each(this, function(i, el){
+                            el.innerHTML = newHtml;
+                        });
+                    } else {
+                        // do get this[0] inner HTML
+                        return this[0] && this[0].innerHTML;
+                    }
+                },
+                val: function(newValue){
+                    if(arguments.length){
+                        //do set innerHTML for each element in $
+                        return $.each(this, function(i, el){
+                            el.value = newValue;
+                        });
+                    } else {
+                        // do get this[0] inner HTML
+                        return this[0] && this[0].value;
+                    }
+                }
+            });
+            $.extend($,{
+                isArray: function(objectToCheck){
+                    return Object.prototype.toString.call(objectToCheck) === '[object Array]';
+                },
+                each: function(collection, callback){
+                    if(isArrayLike(collection)){    // why?
+                        for(var i = 0; i < collection.length; i += 1){
+                            var value = collection[i];
+                            callback.call(value, i, value);
+                        }
+                    } else {
+                        for(var prop in collection){
+                            if(collection.hasOwnProperty(prop)){    // why?
+                                var value = collection[prop];
+                                callback.call(value, prop, value);
+                            }
+                        }
+                    }
+
+                    return collection;
+                },
+                makeArray: function(collection){
+                    var array = [];
+                    $.each(collection, function(i, v){
+                        array.push(v);
+                    });
+                    return array;
+                },
+                proxy: function(fn, context){
+                    return function(){
+                        return fn.apply(context, arguments);    // with call it does not work!
+                    }
+                }
+            });
+
+            var isArrayLike = function(objectToCheck) {
+                if (typeof objectToCheck.length === "number") {
+                    if(objectToCheck.length === 0) {
+                        return true;
+                    } else if(objectToCheck.length > 0) {
+                        return objectToCheck.length-1 in objectToCheck
+                    }
+                }
+                
+                return false;
+            }     
+        }());
+        $('input').val('new text');
+         log($('input').val());
+
+        </script>
+    </body>
+</html>

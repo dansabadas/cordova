@@ -437,6 +437,8 @@
                     return a++;
                 }
             }
+            var yell = green();
+            log(yell(), yell());
             var digit_name = (function(n){
                 var names = ['zero', 'one', 'two'];
                 
@@ -463,6 +465,33 @@
                 setTimeout(step, 100);
             }
 //////////////////////////////////////////
+            function green(){
+                let a = 2;
+                return function yellow(){
+                    return a++;
+                }
+            }
+            var yell = green();
+            log(yell(), yell());
+            var digit_name = (function(n){
+                var names = ['zero', 'one', 'two'];
+                
+                return function (n) {
+                    return names[n];
+                } 
+            }());
+            console.log(digit_name(1));
+
+            //-------------------------------
+var dog = {
+            name1: 'fido',
+            speak: function(words){
+                return this.name1 + ' says ' + words;
+            }
+        };
+        var speak = dog.speak;
+        log(speak("somethig"));
+        //--------------------------------------
             function gizmo(id){
                 return {
                     toString: function() {
@@ -480,9 +509,10 @@
                 return that;
             }
 
-            var my_hoozit = hoozit("SUCCESS");
+            var my_hoozit = hoozit("SUCCESS");  // avoid new keyword use object.create instead. also use Object.freeze for sealing inheritance
             log(my_hoozit, my_hoozit.test("SUCCESS"));
-
+            //--------------------------
+//-------------------------------------
             //1.
             function funky(o) {
                 o = null;
