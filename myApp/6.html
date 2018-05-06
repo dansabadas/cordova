@@ -1,0 +1,74 @@
+<document>
+    <body>
+        <div id="MyDivId">MyDivId</div>
+  
+        <!-- extJS 6.0.1.250 http://docs.sencha.com/extjs/6.0.1/index.html 
+            
+        https://docs.sencha.com/extjs/6.5.0/guides/getting_started/getting_started.html //download SenchaCmd-6.5.3.6-windows-64bit.exe C:\Users\dan_s\bin\Sencha\Cmd
+        http://docs.sencha.com/extjs/6.5.3/guides/quick_start/going_to_production.html
+        -->
+        <script 
+            src="extjs.js"></script>
+        <script>
+            //1. create basic object 1
+            var session = new Object();
+            session.title = "pros and cons";
+            session.id = 101;
+
+            var log = console.log;
+            log(session);
+
+            //2. singleton IIFE
+            (function(){
+                if(typeof MyExt === 'undefined'){
+                    this.MyExt = {
+                        title: "pros and cons",
+                        id: 101
+                    };
+                }
+            })();
+
+            log(MyExt);
+
+            //3.1
+            var div = Ext.getDom("MyDivId");
+            log(div);
+
+            //3.2
+            var runner = new Ext.util.TaskRunner(),
+                task = runner.start({
+                    run: ()=> console.log(Ext.Date.format(new Date(), 'g:i:s A')),
+                    interval: 1000,
+                    repeat: 5
+                });
+            //log(runner);
+
+            //3.3
+            Ext.define("MyApp.Session", {
+                config: {
+                    title: '',
+                    description: '',
+                    level: 'beginner'
+                },
+                constructor: function(config){
+                    this.initConfig(config);
+                },
+
+                applyTitle: function(title){
+                    if(title === undefined){
+                        log('title undefined');
+                    }
+
+                    return title;
+                }
+            });
+
+            var session = Ext.create("MyApp.Session", {
+
+            });
+            session.setTitle("dan awesome");
+            log(session.getTitle(), session.getLevel());
+            session.setTitle(undefined);
+    </script>
+    </body>
+</document>
