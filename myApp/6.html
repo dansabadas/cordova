@@ -1,4 +1,4 @@
-<document>
+<html>
     <body>
         <div id="MyDivId">MyDivId</div>
   
@@ -6,10 +6,15 @@
             
         https://docs.sencha.com/extjs/6.5.0/guides/getting_started/getting_started.html //download SenchaCmd-6.5.3.6-windows-64bit.exe C:\Users\dan_s\bin\Sencha\Cmd
         http://docs.sencha.com/extjs/6.5.3/guides/quick_start/going_to_production.html
+        https://extjs.cachefly.net/ext/gpl/4.2.1/ext-all.js
         -->
-        <script 
-            src="extjs.js"></script>
+        <!-- <script 
+            src="extjs.js"></script> -->
+        <script src="extjs-421-all.js"></script>
+            
         <script>
+            var log = console.log;
+
             //1. create basic object 1
             var session = new Object();
             session.title = "pros and cons";
@@ -37,7 +42,7 @@
             //3.2
             var runner = new Ext.util.TaskRunner(),
                 task = runner.start({
-                    run: ()=> console.log(Ext.Date.format(new Date(), 'g:i:s A')),
+                    run: ()=> console.log('Ext.util.TaskRunner(): ' + Ext.Date.format(new Date(), 'g:i:s A')),
                     interval: 1000,
                     repeat: 5
                 });
@@ -69,6 +74,148 @@
             session.setTitle("dan awesome");
             log(session.getTitle(), session.getLevel());
             session.setTitle(undefined);
+
+            //4.
+            var myComponent = Ext.create("Ext.Component", {
+                html: 'ExtJS with Pluralsight'
+            });
+
+
+
+            var myComponent1 = Ext.create("Ext.Component", {
+                html: 'component1'
+            });
+
+            var myComponent2 = Ext.create("Ext.Component", {
+                html: 'component2'
+            });
+
+            var myComponent3 = Ext.create("Ext.Component", {
+                html: 'component3'
+            });
+
+            var myContainer = Ext.create("Ext.container.Container", {
+                items: [myComponent1, myComponent2, myComponent3],
+                layout: 'vbox'
+            });
+
+            Ext.application({
+                name: 'MyApp',
+                launch: function () {
+                    Ext.create('Ext.container.Viewport', {
+                        items: [
+                            myContainer,
+                            {
+                                xtype: 'button',
+                                text: 'disable',
+                                handler: function(){
+                                    this.up().down('#myComponent').disable();
+                                    log('disabling');
+                                }
+                            },
+                            {
+                                xtype: 'button',
+                                text: 'enable',
+                                handler: function(){
+                                    this.up().down('#myComponent').enable();
+                                    log('enabling');
+                                }
+                            },
+                            {
+                                xtype: 'button',
+                                text: 'hide',
+                                handler: function(){
+                                    this.up().down('#myComponent').hide();
+                                }
+                            },
+                            {
+                                xtype: 'button',
+                                text: 'show',
+                                handler: function(){
+                                    this.up().down('#myComponent').show();
+                                }
+                            },
+                            { 
+                                xtype:'component', 
+                                tpl: 'name {first} {last}', 
+                                data: { first: 'peter', last: 'danson' } 
+                            },
+                            myComponent,
+                            { xtype:'component', html: 'my second component', padding: 20 },
+                            {
+                                html: [
+                                '<p>If you click on me, I will disappear.</p>',
+                                '<p>Click me away!</p>',
+                                '<p>Click me too!</p>'
+                                ]
+                            },
+                            { 
+                                itemId: "myComponent",
+                                xtype:'component', 
+                                html: 'my 4th component',
+                                padding: 20,
+                                width: 200,
+                                height: 200,
+                                style: {
+                                    border: '2px solid red'
+                                },
+                                resizable: true,
+                                listener: {
+                                    resize: {
+                                        fn: function(component, width, height){
+                                            console.log(width, height);
+                                        }
+                                    },
+                                    click: {
+                                        fn: function(component){
+                                            console.log(componentt);
+                                        }
+                                    }
+                                } 
+                            }
+                        ]
+                    });
+                }
+            });
+
+            Ext.define('SessionModel', {
+                extend: 'Ext.data.Model',
+                fields: [
+                    { name: 'id', type: 'int' },
+                    { name: 'title', type: 'string' },
+                    { name: 'sessionLevel', type: 'int'},
+                    { name: 'approved', type: 'bool', defaultValue: false }
+                ],
+                validations: [
+                    { type: 'length', field: 'title', min: 3 },
+                    { type: 'inclusion', field: 'sessionLevel', list: [1,2,3] }
+                ],
+
+                proxy: {
+                    type: 'rest',
+                    url: '/session',
+                    reader: {
+                        type: 'json'
+                    }
+                },
+            });
+
+            var session1 = Ext.create("SessionModel", {
+                id: 101.2,
+                title: 'J#'
+            });
+
+            log(session1, session1.isValid(), session1.validate());
+
+            var session1 = Ext.create("SessionModel", {
+                id: 101,
+                title: 'Javascript',
+                sessionLevel: 2
+            });
+
+            log(session1, session1.isValid(), session1.validate());
+
+            // json-server --watch db.json
     </script>
     </body>
-</document>
+</html>
