@@ -1,5 +1,21 @@
 {
-    "session": [
-        { "id": 1, "title": "json-server", "sessionLevel": "3" }
-      ]
-  }
+  "session": [
+    {
+      "id": 1,
+      "title": "json-server",
+      "sessionLevel": "3"
+    },
+    {
+      "id": 2,
+      "title": "Javascript",
+      "sessionLevel": 2,
+      "approved": false
+    },
+    {
+      "id": 3,
+      "title": "Javascript",
+      "sessionLevel": 2,
+      "approved": false
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 <html>
     <body>
-        <div id="MyDivId">MyDivId</div>
+        <!-- <div id="MyDivId">MyDivId</div> -->
   
         <!-- extJS 6.0.1.250 http://docs.sencha.com/extjs/6.0.1/index.html 
             
@@ -9,7 +9,9 @@
         https://extjs.cachefly.net/ext/gpl/4.2.1/ext-all.js
         -->
         <!-- <script 
-            src="extjs.js"></script> -->
+            src="extjs.js"></script> ext-theme-neptune-all -->
+        <link href="http://cdn.sencha.io/ext/gpl/4.2.1/resources/css/ext-all-neptune.css" rel="stylesheet" />
+        <!-- <link href="ext-theme-neptune-all.css" rel="stylesheet" /> -->
         <script src="extjs-421-all.js"></script>
             
         <script>
@@ -99,7 +101,7 @@
                 layout: 'vbox'
             });
 
-            Ext.application({
+            var extJSViewPort1 = {
                 name: 'MyApp',
                 launch: function () {
                     Ext.create('Ext.container.Viewport', {
@@ -176,7 +178,7 @@
                         ]
                     });
                 }
-            });
+            };
 
             Ext.define('SessionModel', {
                 extend: 'Ext.data.Model',
@@ -193,10 +195,15 @@
 
                 proxy: {
                     type: 'rest',
-                    url: '/session',
+                    url: 'http://localhost:3000/session',
                     reader: {
                         type: 'json'
-                    }
+                    },
+                    writer: {
+                        type: 'json',
+                        writeRecordId: false
+                    },
+                    appendId: false // https://www.sencha.com/forum/showthread.php?298373-How-to-correctly-append-value-to-REST-proxy-URL
                 },
             });
 
@@ -208,7 +215,6 @@
             log(session1, session1.isValid(), session1.validate());
 
             var session1 = Ext.create("SessionModel", {
-                id: 101,
                 title: 'Javascript',
                 sessionLevel: 2
             });
@@ -216,6 +222,186 @@
             log(session1, session1.isValid(), session1.validate());
 
             // json-server --watch db.json
+            session1.save({
+                success: function(session){
+                    log(session.getData());
+                    session.destroy();
+                }
+            });
+
+            var SessionModel = Ext.ModelManager.getModel('SessionModel');
+            SessionModel.load(1, {
+                success: function(session) {
+                    console.log(session.getId(), session); 
+                    session.set('approved', !session.get("approved"));
+                    session.save({
+                        success: function(s){
+                            log(s.getData());
+                        }
+                    });
+                }
+            });
+
+            //Ext.application(extJSViewPort1);
+            
+            var sessionspanel = Ext.create('Ext.Panel', {
+                html: 'Sessions Panel',
+                region: 'west',
+                flex: 2
+            });
+            var speakerspanel = Ext.create('Ext.Panel', {
+                html: 'Speakers Panel',
+                region: 'south',
+                flex: 1
+            });
+            var detailspanel = Ext.create('Ext.Panel', {
+                html: 'Details Panel',
+                region: 'center',
+                flex: 3
+            });
+
+            var sessionPanel2 = {   // without even using Ext.create!
+                xtype: 'panel',
+                html: '<b>Sessions panel</b>',
+                flex: 2
+            };
+            var combinedSessionSpeaker = Ext.create('Ext.Panel', {
+                layout: {
+                    type: 'vbox'
+                },
+                items: [sessionPanel2, speakerspanel]
+            });
+
+            var splitter = {
+                xtype: 'splitter',
+                width: 1
+            };            
+            
+            var sessionGridPanel = Ext.create("Ext.grid.Panel", {
+                    store: {
+                        fields: [
+                            'id',
+                            { name: 'title', sortType: 'asUCText' },
+                            { name: 'approved', type: 'boolean' }
+                        ],
+                        data: [
+                            { id: 101, title: 'JavaScript For Dummies', approved: true },
+                            { id: 102, title: 'C# For Smarties', approved: false },
+                            { id: 103, title: 'ExtJS For Everyone', approved: true, xtype: 'boolean' }
+                        ],
+
+                        sorters: [
+                        {
+                            property: 'title'
+                        }]
+                    },
+
+                    columns: [
+                        {
+                            xtype: 'gridcolumn',
+                            dataIndex: 'title',
+                            text: 'Title',
+                            flex: 1,    // take as much space as is possible
+                            minWidth: 150
+                        },
+                        {
+                            xtype: 'gridcolumn',
+                            dataIndex: 'id',
+                            text: 'Id'
+                        },
+                        {
+                            xtype: 'checkcolumn',
+                            dataIndex: 'approved',
+                            text: 'Approved'
+                        }
+                    ],
+
+                });
+
+             Ext.define("SessionGridPanel", {
+                    extend: 'Ext.grid.Panel',
+                    alias: 'widget.sessionGridPanel',
+                    store: {
+                        fields: [
+                            'id',
+                            { name: 'title', sortType: 'asUCText' },
+                            { name: 'approved', type: 'boolean' }
+                        ],
+                        data: [
+                            { id: 101, title: 'JavaScript For Dummies', approved: true },
+                            { id: 102, title: 'C# For Smarties', approved: false },
+                            { id: 103, title: 'ExtJS For Everyone', approved: true, xtype: 'boolean' }
+                        ],
+
+                        sorters: [
+                        {
+                            property: 'title'
+                        }]
+                    },
+
+                    columns: [
+                        {
+                            xtype: 'gridcolumn',
+                            dataIndex: 'title',
+                            text: 'Title',
+                            flex: 1,    // take as much space as is possible
+                            minWidth: 150
+                        },
+                        {
+                            xtype: 'gridcolumn',
+                            dataIndex: 'id',
+                            text: 'Id'
+                        },
+                        {
+                            xtype: 'checkcolumn',
+                            dataIndex: 'approved',
+                            text: 'Approved'
+                        }
+                    ],
+
+                });
+            
+                var gridPanel2 = {
+                    xtype: 'sessionGridPanel',
+                    flex: 3
+                };
+
+            var combinedSessionSpeaker2 = {
+                xtype: 'panel',
+                region: 'west',
+                layout: {
+                    type: 'vbox',
+                    align: 'stretch'
+                },
+                flex: 1,
+                items: [gridPanel2, splitter, speakerspanel]
+            };
+
+            var detailsPanel2 = {
+                xtype: 'panel',
+                html: 'Details Panel 2',
+                region: 'center',
+                flex: 3,
+                title: 'Details Panel 2',
+                collapsible: true,
+                collapsed: true,
+                collapseDirection: 'right'
+            };
+
+
+            Ext.application({
+                name: 'MyApp',
+                launch: function(){
+                    Ext.create('Ext.container.Viewport', {
+                        //html: 'Howdy',
+                        layout: {
+                            type: 'border',
+                            // align: 'stretch'
+                        },
+                        items: [combinedSessionSpeaker2, /*{ xtype: 'splitter', width: 2 },*/ detailsPanel2]
+                    });
+                }
+            });
     </script>
     </body>
 </html>
