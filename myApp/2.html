@@ -430,7 +430,15 @@
 
             //log(getNodes("<td>test</td><td>test2</td>").length === 2, "Get two nodes back from the method.");
             //log(getNodes("<td>test</td>")[0].nodeName === "TD", "Verify that we're getting the right node.");
-
+/////////////////////////////
+      ////////////////////////
+      ///////////////////////
+      //0.0 var log = console.log
+      //0.1. present the main types. How the Number type is got right except 0.1+0.2
+      //0.2. present function variable
+      //0.3. present hoisting. how is done except functions!
+      //0.4. the { notation convention because of stupid }
+      //0.5. green-yell closure (named yellow is optional)
             function green(){
                 let a = 2;
                 return function yellow(){
@@ -439,6 +447,7 @@
             }
             var yell = green();
             log(yell(), yell());
+      //0.6 digit closure example
             var digit_name = (function(n){
                 var names = ['zero', 'one', 'two'];
                 
@@ -448,7 +457,7 @@
             }());
 
             console.log(digit_name(1));
-
+      //0.7. fade more complex example
             function fade(id){
                 var dom = document.getElementById(id),
                     level = 1;
@@ -464,25 +473,9 @@
                 
                 setTimeout(step, 100);
             }
-//////////////////////////////////////////
-            function green(){
-                let a = 2;
-                return function yellow(){
-                    return a++;
-                }
-            }
-            var yell = green();
-            log(yell(), yell());
-            var digit_name = (function(n){
-                var names = ['zero', 'one', 'two'];
-                
-                return function (n) {
-                    return names[n];
-                } 
-            }());
-            console.log(digit_name(1));
-
             //-------------------------------
+      //0.8. confuzing the this keyword
+      //log(speak("somethig")); => undefined dog.speak will return correct expectation
 var dog = {
             name1: 'fido',
             speak: function(words){
@@ -491,26 +484,64 @@ var dog = {
         };
         var speak = dog.speak;
         log(speak("somethig"));
+        log(dog.speak("somethig"));
+
+      //0.9 instead of gizmo hoozit try Cat-Animal with proto inheritance and then with factory classless!
+        function Animal() {
+          this.toString = function() {
+            return "Animal" + this.id;
+          }
+        }
+        log(new Animal().toString());
+
+        function Dog(id) {
+          this.id = id;
+        }
+
+      // log(new Dog(2).toString()); what output? => this means it exists already implemented!
+        log(new Dog(3));
+        log(new Dog(2).toString());
+
+      // Dog.prototype => prot inheritance - any function has this - from self
+        Dog.prototype = new Animal();
+        log(new Dog(2).toString());
+        log(new Dog(3).toString());
+
+        function makeAnimal() {
+          return {
+            toString: function () {
+              return "Animal" + this.id;
+            }
+          };
+        }
+
+        function makeDog(id) {
+          var animal = makeAnimal();
+
+          animal.id = id;
+        }
+
+        // commented code below not needed anymore
         //--------------------------------------
-            function gizmo(id){
-                return {
-                    toString: function() {
-                        return "gizmo" + id;
-                    }
-                };
-            }
+            //function gizmo(id){
+            //    return {
+            //        toString: function() {
+            //            return "gizmo" + id;
+            //        }
+            //    };
+            //}
 
-            function hoozit(id){
-                var that = gizmo(id);
-                that.test = function(testid){
-                    return testid === id;
-                };
+            //function hoozit(id){
+            //    var that = gizmo(id);
+            //    that.test = function(testid){
+            //        return testid === id;
+            //    };
                 
-                return that;
-            }
+            //    return that;
+            //}
 
-            var my_hoozit = hoozit("SUCCESS");  // avoid new keyword use object.create instead. also use Object.freeze for sealing inheritance
-            log(my_hoozit, my_hoozit.test("SUCCESS"));
+            //var my_hoozit = hoozit("SUCCESS");  // avoid new keyword use object.create instead. also use Object.freeze for sealing inheritance
+            //log(my_hoozit, my_hoozit.test("SUCCESS"));
             //--------------------------
 //-------------------------------------
             //1.
@@ -1063,8 +1094,8 @@ var dog = {
             sqrtc = continuize(Math.sqrt);
             sqrtc(log, 81); //9
 
-            //36. write an array wrapper object with methods get store and append such that
-            // an attacker cannot get access to the private array
+            //36. write an array wrapper object with methods: get, store and append 
+            //  such that an attacker cannot get access to the private array
             function vector(){  // this first attempt still can be attacked
                 var array = [];
                 return {
