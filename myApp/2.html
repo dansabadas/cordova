@@ -435,10 +435,24 @@
       ///////////////////////
       //0.0 var log = console.log
       //0.1. present the main types. How the Number type is got right except 0.1+0.2
+      //0.1.1. null vs undefined
       //0.2. present function variable
-      //0.3. present hoisting. how is done except functions!
-      //0.4. the { notation convention because of stupid }
-      //0.5. green-yell closure (named yellow is optional)
+      //0.3. present hoisting. how is done
+            function someFunction(i) {
+              if (i % 2 === 0) {
+                var j1 = 2;
+              } else {
+                var j2 = 3;
+              }
+              log(j1, j2);
+            }
+
+            someFunction(2);
+            someFunction(3);
+      //0.4. the { notation convention because of stupid ; automatic insertion
+            //0.5. green-yell closure (named yellow is optional) - inner func survives somehow! 
+      //      and has access to a which is no longer on stack? => put it on heap with great gabrage collector
+      // because GC was not easily done with heap 40 years ago. Scheme did discover it first! => JS did it first to mainstream!, then Python/Ruby, C#, C++/PhP, Java, C# 7 vs C#2
             function green(){
                 let a = 2;
                 return function yellow(){
@@ -447,7 +461,9 @@
             }
             var yell = green();
             log(yell(), yell());
-      //0.6 digit closure example
+            //0.6 digit closure example => 
+      //      put var names = ['zero', 'one', 'two']; inside func so to hide it from global naming!
+      // use return inner function and not directly return names[i] because this way we don't need to recreate/allocate a new array any time we invoke the function
             var digit_name = (function(n){
                 var names = ['zero', 'one', 'two'];
                 
@@ -476,15 +492,15 @@
             //-------------------------------
       //0.8. confuzing the this keyword
       //log(speak("somethig")); => undefined dog.speak will return correct expectation
-var dog = {
+        var dog = {
             name1: 'fido',
             speak: function(words){
                 return this.name1 + ' says ' + words;
             }
         };
-        var speak = dog.speak;
-        log(speak("somethig"));
         log(dog.speak("somethig"));
+        var speak = dog.speak;  // window global context
+        log(speak("somethig"));
 
       //0.9 instead of gizmo hoozit try Cat-Animal with proto inheritance and then with factory classless!
         function Animal() {
@@ -504,8 +520,28 @@ var dog = {
 
       // Dog.prototype => prot inheritance - any function has this - from self
         Dog.prototype = new Animal();
+
         log(new Dog(2).toString());
         log(new Dog(3).toString());
+
+        function Cat(id) {
+          this.id = id;
+          this.makeSound = function () {
+            log('miau' + this.id);
+          };
+        }
+        var cat = new Cat(3);
+        cat.makeSound();
+
+        var doggie4 = new Dog(4);
+
+        var dogSoundFunc = cat.makeSound.bind(doggie4);
+        dogSoundFunc();
+        cat.makeSound();
+        dogSoundFunc();
+        log(cat);
+        delete cat.makeSound;
+        log(cat);
 
         function makeAnimal() {
           return {
@@ -544,7 +580,7 @@ var dog = {
             //log(my_hoozit, my_hoozit.test("SUCCESS"));
             //--------------------------
 //-------------------------------------
-            //1.
+            //1. ask people first their opinion! => funky coompletely useless
             function funky(o) {
                 o = null;
             }
@@ -552,9 +588,9 @@ var dog = {
             var x = [];
 
             funky(x);
-            log(x); //a. throw exception b. =null c. =[]
+            log(x); //a. throw exception b. =null c. =[] 
 
-            //2.
+            //2. what is value of x?
             function swap(a, b){
                 var temp = a;
                 a = b;
@@ -565,7 +601,7 @@ var dog = {
             swap(x, y);
             log(x); //a. 1 b.2 c.undefined d. throw exc
 
-            //3. write add, sub and mul functions (should be as below)
+            //3. write 3 binary functions: add, sub and mul functions (no tricks!)
             function add(a, b){
                 return a+b;
             }
@@ -579,8 +615,8 @@ var dog = {
             log(sub(3,4));
             log(mul(3,4));
 
-            //4. closure with 1 arg
-            //write a func identityf that takes an argument
+            //4. closure with 1 arg - first interesting pb! :) - who got it? don't be discouraged
+            // write a func identityf that takes an argument
             // and returns a function that returns that argument
             function identityf(o){
                 return function(){
@@ -591,47 +627,59 @@ var dog = {
             var three = identityf(3);
             log(three()); // 3
 
-            //5. closure with 2 args
+            //5. closure with 2 args - suggested mandatory for hiring interviews! RaphaelJS
+            // write a function addf that adds from two invocations 
             function addf(a){
                 return function(b){
-                    return add(a,b);
+                  return add(a, b);
+                  // or return a + b
                 }
             }
-            log(addf(3)(4));
 
-            //6. closure with 3 args: 2 numerical and one function which handles the 2 numbers
+            log(addf(3)(4));  // 7
+
+            //6. closure with 3 args: 2 numerical and one function which handles the 2 numbers - higher-order function (that receives other functions as params)
+            // write a function liftf that takes a binary function and makes it callable with two invocations
             function liftf(f){
                  return function(a1){
                     return function(b1){
-                            return f(a1, b1);
+                        return f(a1, b1);
                     };
                 };
             }
-            var addf1 = liftf(add);
-            log(addf1(3)(4));
-            log(liftf(mul)(5)(6));
 
-            //7. curry function
-            function curry(f, a){
+            var addf1 = liftf(add);
+            log(addf1(3)(4)); // 7
+            log(liftf(mul)(5)(6));  // 30
+
+            //7. curry function - Haskell curry
+            // extra credit for liftf usage => transforming a function that takes multiple args into multiple functions that take one arg => is called currying
+
+            // write a function curry that takes two arguments: a binary function and a 'regular' argument,
+            // and returns a function that can take a second argument (and that invokes the binary function)
+            function curry(f, a) {
+              //return liftf(a);
                 return function(b){
-                    return f(a, b);
+                  return f(a, b);
                 }
             }
 
             var add3 = curry(add, 3);
-            log(add3(4));
-            log(curry(mul, 5)(6));
+            log(add3(4));   // 7
+            log(curry(mul, 5)(6));  //30
 
-            //8. write increment function using existing functions
+            //8. let the functions to the work! - the first rule of functional programming
+            //  write increment function using existing functions
+            // do not create any new function but use the existing functions
             var inc = addf(1);
-            log(inc(5));
-
             var inc2 = liftf(add)(1);
             var inc3 = curry(add, 1);
-            log(inc3(5));
+
+            log(inc(5));  // 6
+            log(inc3(5)); // 6
 
             //9. write a func called "twice" 
-            // that takes a binary func and return an unary func that passes its argument to the binary fun twice
+            // that takes a binary func and return an unary func that passes its argument to the binary function twice
             function twice(binaryFunc){
                 return function(b){
                     return binaryFunc(b, b);
@@ -653,40 +701,47 @@ var dog = {
             var bus = reverse(sub);
             log(bus(3,2));
 
-            //11. write a func composeu that takes two unary functions and returns a unary func that calls them both
+            //11. like UNIX pipes
+            // write a func composeu that takes two unary functions 
+            // and returns a unary func that calls them both (composing them)
             function composeu(unaryFunc1, unaryFunc2){
                 return function(a){
                     return unaryFunc2(unaryFunc1(a));
                 }
             }
-            log(composeu(doubl, square)(5));
 
-            //12. write a func composeb that takes two binary funcs and returns a func that calls them both
+            log(composeu(doubl, square)(5));  // 100
+
+            //12. write a func composeb that takes two binary funcs 
+            // and returns a func that calls them both (composing them)
             function composeb(bf1, bf2){
                 return function(a, b, c){
                     return bf2(bf1(a,b), c);
                 }
             }
-            log(composeb(add, mul)(2, 3, 7));
 
-            //13. write a limit func that allows a binary func to be called a limited number of times
-            function limit(bf1, l){
-                return function(a, b){
+            log(composeb(add, mul)(2, 3, 7)); //35
+
+            //13. return undefined: 2 schools of thought: either save space, or provide documented code for the contract to return undefined
+            // write a limit func that allows a binary func to be called a limited number of times
+            function limit(bf1, l) {
+                return function(a, b) {
                     if(l >= 1){
                         l -= 1;
                         return bf1(a,b);
                     }
+
                     return undefined;
                 }
             }
 
             var add_ltd = limit(add, 1);
-            log(add_ltd(3, 4));
-            log(add_ltd(3, 4));
+            log(add_ltd(3, 4)); // 7
+            log(add_ltd(3, 4)); // undefined
             var mul_ltd = limit(mul, 2);
-            log(mul_ltd(3, 4));
-            log(mul_ltd(3, 4));
-            log(mul_ltd(3, 4));
+            log(mul_ltd(3, 4)); //12
+            log(mul_ltd(3, 4)); //12
+            log(mul_ltd(3, 4)); //undefined
 
             //14. write a 'from' func that produces a generator that will produce a serioes of values
             function from(seed){
@@ -696,11 +751,11 @@ var dog = {
             } 
             
             var index = from(0);
-            log(index());
-            log(index());
-            log(index());
+            log(index()); // 1
+            log(index()); // 2
+            log(index()); // 3
 
-            //15. write a 'to' func which takes a generator and an end val and returns a generator that will produce numbers up to that limit
+            //15. write a 'to' func which takes a generator (see pb. above) and an end val and returns a generator that will produce numbers up to that limit
             function to(generator, endVal){
                 return function(){
                     var nextVal = generator();
@@ -711,22 +766,23 @@ var dog = {
             } 
 
             var index = to(from(1), 3);
-            log(index());
-            log(index());
-            log(index());
+            log(index()); //1
+            log(index()); //2
+            log(index()); //undefined
 
-            //16. write a 'fromTo'that produces a generator that will produce values in a range
+            //16. write a 'fromTo' that produces a generator that will produce values in a range
             function fromTo(startVal, endVal){
                 return to(from(startVal), endVal);
             }
 
             var index = fromTo(0, 3);
-            log(index());
-            log(index());
-            log(index());
-            log(index());
+            log(index()); //0
+            log(index()); //1
+            log(index()); //2
+            log(index()); //undefined
 
-            //17. write an 'element' func that takes an array and a generator and returns a generator that will produce elements from the array
+            //17. better to use this version than the more direct: var next = generatorFunc(); return arr[next]; because still accidentally works cause arr[undefined] does not exist
+            // write an 'element' func that takes an array and a generator and returns a generator that will produce elements from the array
             function element(arr, generatorFunc){
                 return function(){
                     var nextVal = generatorFunc();
@@ -737,14 +793,14 @@ var dog = {
             }
 
             var ele = element(['a', 'b', 'c', 'd'], fromTo(1, 3));
-            log(ele());
-            log(ele());
-            log(ele());
+            log(ele()); //b
+            log(ele()); //c
+            log(ele()); //undefined
 
             //18. modify the 'element' function so that the generator argument is optional. 
             // If generator not provided => then each element of the array will be provided
             function element(arr, generatorFunc){
-            var generator = generatorFunc !== undefined ? generatorFunc : fromTo(0, arr.length);
+              var generator = generatorFunc !== undefined ? generatorFunc : fromTo(0, arr.length);
                return function(){
                     var nextVal = generator();
                     if(nextVal !== undefined){
@@ -754,14 +810,14 @@ var dog = {
             }
 
             var ele = element(['a', 'b', 'c', 'd']);
-            log(ele());
-            log(ele());
-            log(ele());
-            log(ele());
-            log(ele());
+            log(ele());//a
+            log(ele());//b
+            log(ele());//c
+            log(ele());//d
+            log(ele());//undef
 
-            //19. wite a 'collect' func that takes a generator and an array and produces a function  
-            // that will collect the results (made inernally by the generator at every invocation of collect) in the array
+            //19. write a 'collect' func that takes a generator and an array and produces a function  
+            // that will collect the results (made internally by the generator at every invocation of collect) in the array
             function collect(generator, arr){
                 return function(){
                     var res = generator();
@@ -776,12 +832,13 @@ var dog = {
 
             var array = [],
                 col = collect(fromTo(0, 2), array);
-            log(col());
-            log(col());
-            log(col());
-            log(array);
+            log(col()); //0
+            log(col()); //1
+            log(col()); //undef
+            log(array); //[0,1]
 
-            //20. write a filter func that takes a generator and a predicate 
+            //20. named third is optional - hint: you need a loop. also show the commented recursive version below properly implemented now in ES6 (recursive vs iterative approach)
+            // write a filter func that takes a generator and a predicate 
             // and produces a generator that produces only the values approved by the predicate
             function filter(generator, predicate){
                 return function(){ 
@@ -794,12 +851,22 @@ var dog = {
                 }
             }
 
+            //function filter(generator, predicate) {
+            //  return function recur() {
+            //    var value = generator();
+            //    if (value == undefined || predicate(value)) {
+            //      return value;
+            //    }
+            //    return recur();
+            //  }
+            //}
+
             var fil = filter(fromTo(0, 5), function third(value){
                 return value % 3 === 0;
             });
-            log(fil());
-            log(fil());
-            log(fil());
+            log(fil()); // 0
+            log(fil()); // 3
+            log(fil()); // undefined
 
             //21. write a 'concat' function which takes 2 generators and produces a generator that combines the sequences
             function concat(gen1, gen2){
@@ -815,12 +882,12 @@ var dog = {
             }
 
             var con = concat(fromTo(0, 3), fromTo(0, 2));
-            log(con());
-            log(con());
-            log(con());
-            log(con());
-            log(con());
-            log(con());
+            log(con()); //0
+            log(con()); //1
+            log(con()); //2
+            log(con()); //0
+            log(con()); //1
+            log(con()); //undef
 
             //22. make a function 'gensymf' that makes a function that generates unique symbols
             function gensymf(symbol){
@@ -831,15 +898,17 @@ var dog = {
                 }
             }
 
-            var geng = gensymf("G");
+            var geng = gensymf("G");  // these are prefixes (G series and H series)
             var genh = gensymf("H");
 
-            log(geng());
-            log(genh());
-            log(geng());
-            log(genh());
+            log(geng());//G1
+            log(genh());//H1
+            log(geng());//G2
+            log(genh());//H2
 
-            //23. make a fibonaccif that returns a generator that will return the next fibonacci number
+            //23. this is a factory fibonacci generator. this is hard. no recursivity! elegant iterativity!
+      //first example is a little too big and we do not need the i. the second sample is the more optimal
+            // make a fibonaccif that returns a generator function that will return the next fibonacci number
             function fibonaccif(i1, i2){
                 var i = -1, next;               
                 return function(){
@@ -859,12 +928,12 @@ var dog = {
             }
 
             var fib = fibonaccif(0, 1);
-            log(fib());
-            log(fib());
-            log(fib());
-            log(fib());
-            log(fib());
-            log(fib());
+            log(fib());//0
+            log(fib());//1
+            log(fib());//1
+            log(fib());//2
+            log(fib());//3
+            log(fib());//5
 
             function fibonaccif(i1, i2){
                 return function(){
@@ -882,7 +951,8 @@ var dog = {
             log(fib());
             log(fib());
 
-            //24. write a counter function that returns an object containing 2 functions that implement 
+            //24. Hint: no 'this', no glocal variables! :) OOP combined with functional programming/closures
+            // write a counter function that returns an object containing 2 functions that implement 
             // an up/down counter, hiding the counter
             function counter(seed)
             {
@@ -901,31 +971,46 @@ var dog = {
             var object = counter(10),
                 up = object.up,
                 down = object.down;
-            log(up());
-            log(down());
-            log(down());
-            log(up());
+            log(up());  //11
+            log(down());//10
+            log(down());//9
+            log(up());  //10
 
-            //25. make a revocable function that takes a binary function and returns an object containing 
+            //25. this sounds much more complex than it actually is!!! :)
+            // make a revocable function that takes a binary function and returns an object containing 
             // an invoke function that can invoke the binary function and a revoke function that disables the invoke function
             function revocable(binaryF){
                 return {
-                    invoke: function(a, b){
-                        return binaryF === undefined ? undefined : binaryF(a, b);
-                    },
-                    revoke: function(){
-                        binaryF = undefined;
-                    }
-                };
-            }
+                  invoke: function (a, b) {
+                    return binaryF === undefined ? undefined : binaryF(a, b);
+                  },
+                  revoke: function () {
+                    binaryF = undefined;
+                  }
+                }
+              };
+
+              //alternate impl:
+                //var isRevoked = false;
+                //return {
+                //  invoke: function (a, b) {
+                //    if (!isRevoked) {
+                //      return binaryF(a, b);
+                //    }
+                //  },
+                //  revoke: function () {
+                //    isRevoked = true;
+                //  }
+                //};
 
             var rev = revocable(add);
             add_rev = rev.invoke;
-            log(add_rev(3, 4));
+            log(add_rev(3, 4)); //7
             rev.revoke();
-            log(add_rev(3, 4));
+            log(add_rev(3, 4)); // undefined
 
-            //26. write a function m that takes a values and an optional source string and returns them in an object
+            //26. 
+            // write a function 'm' that takes a value and an optional source string and returns them in an object
             function m(value, source){
                 return {
                     "value": value,
@@ -933,10 +1018,11 @@ var dog = {
                 };
             }
 
-            log(JSON.stringify(m(1)));
-            log(JSON.stringify(m(Math.PI, "pi")));
+            log(JSON.stringify(m(1)));// {"value":1,"source":"1"}
+            log(JSON.stringify(m(Math.PI, "pi")));//{"value":3.141592653589793,"source":"pi"}
 
-            //27. write a func 'addm' that takes two m objects and returns an m object 
+            //27. who did it? the hard way and with the first rule of func programming...
+            // write a func 'addm' that takes two m objects and returns an m object 
             //(m have 2 properties. one is mandatory 'value' and the other is optional: 'source')
             function addm(m1, m2){
                 return m(
@@ -945,10 +1031,11 @@ var dog = {
                 );
             }
 
-            log(JSON.stringify(addm(m(1), m(3))));
-            log(JSON.stringify(addm(m(1), m(Math.PI, "pi"))));
+            log(JSON.stringify(addm(m(1), m(3))));  //{"value":4,"source":"(1+3)"}
+            log(JSON.stringify(addm(m(1), m(Math.PI, "pi"))));  //{"value":4.141592653589793,"source":"(1+pi)"}
 
-            //28. write a function 'liftm' that takes a binary function and a string and returns a function that acts on m objects
+            //28. this is a monad!
+            // write a function 'liftm' that takes a binary function and a string and returns a function that acts on m objects
             function liftm(binary, sign){
                 return function(m1, m2){
                     return m(
@@ -959,10 +1046,11 @@ var dog = {
             }
 
             var addm = liftm(add, "+");
-            log(JSON.stringify(addm(m(1), m(3))));
-            log(JSON.stringify(liftm(mul, "*")(m(4), m(3))));
+            log(JSON.stringify(addm(m(1), m(3))));  //{"value":4,"source":"(1+3)"}
+            log(JSON.stringify(liftm(mul, "*")(m(4), m(3)))); //{"value":12,"source":"(4*3)"
 
-            //29. modify liftm so that the functions it produces ca accept arguments that are either numbers or m objects
+            //29. 
+            // modify liftm so that the functions it produces can accept arguments that are either numbers or m objects
             function liftm(binary, sign){
                 return function(a, b){
                     var value, source;
@@ -981,9 +1069,11 @@ var dog = {
             }
 
             var addm = liftm(add, "+");
-            log(JSON.stringify(addm(1, 3)));
+            log(JSON.stringify(addm(1, 3)));//{"value":4,"source":"(1+3)"}
 
-            //30. write a function 'exp' that evaluates simple array expressions.
+            //30. a simple array expression is an array in which the first element is a function and the remaining elements are arguments to the function
+            // assume the sae has always only 3 elements. two different implementations below
+            // write a function 'exp' that evaluates simple array expressions.
             function exp(arr){
                 if(typeof arr === 'number'){
                     return arr;
@@ -992,20 +1082,22 @@ var dog = {
                 return binaryF(arr.shift(), arr.shift());
             }
 
-            function exp(value){
-                return Array.isArray(value)
-                ? value[0](value[1], value[2])
-                : value;
-            }
+            //function exp(value){
+            //    return Array.isArray(value)
+            //    ? value[0](value[1], value[2])
+            //    : value;
+            //}
             var sae = [mul, 5, 11];
-            log(exp(sae));
-            log(exp(42));
+            log(exp(sae));  // 55
+            log(exp(42));   //42
 
-            //31. Modify exp to evaluate nested array expressions
+            //31. there are 2 implementations below!. this time we can have 3 or 2 elements in the array
+            // it resembles LISP!
+            // Modify exp to evaluate nested array expressions
             function exp(value){
                 if(!Array.isArray(value)) return value;
                 var val1 = Array.isArray(value[1]) ? exp(value[1]) : value[1],
-                    val2 = Array.isArray(value[2]) ? exp(value[2]) :value[2];
+                    val2 = Array.isArray(value[2]) ? exp(value[2]) : value[2];
                 return value.length === 3 
                     ? value[0](val1, val2) 
                     : value[0](val1)
@@ -1024,9 +1116,10 @@ var dog = {
                     [square, 4]
                 ]
             ];
-            log(exp(nae));
+            log(exp(nae));  // 5
 
-            //32. write a function 'addg' which adds from many invocations until it sees an empty invocation (hint: it returns itself somehow)
+            //32. (hint: it involves a function which returns itself somehow)
+            // write a function 'addg' which adds from many invocations until it sees an empty invocation 
             function addg(first){
                 function more(next){
                     if(next === undefined) {
@@ -1036,15 +1129,20 @@ var dog = {
                     first += next;
                     return more;
                 }
+
                 if(first !== undefined){
                     return more;
                 }
             }
 
-            log(addg());//undefined
+            log(addg());            //undefined
+            log(addg(2)());         //2
+            log(addg(2)(7)());      //9
+            log(addg(3)(0)(4)());   //7
             log(addg(1)(2)(4)(8)());//15
 
-            //33. write a func 'liftg' that will take a binary function and apply it to many invocations
+            //33. 
+            // write a func 'liftg' that will take a binary function and apply it to many invocations
             function liftg(binaryF){
                 return function(first){
                     if(first === undefined){
@@ -1065,7 +1163,8 @@ var dog = {
             log(liftg(mul)(1)(0)(4)(8)());  //0
             log(liftg(mul)(1)(2)(4)(8)());  //64
 
-            //34. write a function 'arrayg' that will build an array from many invocations
+            //34. the 2 impl
+            // write a function 'arrayg' that will build an array from many invocations
             function arrayg(first){
                 var returnArr = [];             
                 function more(next){
@@ -1079,11 +1178,23 @@ var dog = {
                 return more(first);
             }
 
+            //function arrayg(first) {
+            //  if (first === undefined) {
+            //    return [];
+            //  }
+            //  return liftg(
+            //    function (array, value) {
+            //      array.push(value);
+            //      return array;
+            //    })([first]);
+            //}
+
             log(arrayg());           //[]
             log(arrayg(3)());        //[3]
             log(arrayg(3)(4)(5)());  //[3,4,5]
 
-            //35. make a 'continuize' function that takes a unary function and returns
+            //35. 
+            // make a 'continuize' function that takes a unary function and returns
             // a function that takes a callback and an argument
             function continuize(unaryF){
                 return function(callback, arg){
@@ -1094,8 +1205,9 @@ var dog = {
             sqrtc = continuize(Math.sqrt);
             sqrtc(log, 81); //9
 
-            //36. write an array wrapper object with methods: get, store and append 
-            //  such that an attacker cannot get access to the private array
+            //36. we want to hide the array and that we use the JS cumbersome array!
+            // write an array wrapper object with methods: get, store and append 
+            // such that an attacker cannot get access to the private array
             function vector(){  // this first attempt still can be attacked
                 var array = [];
                 return {
@@ -1114,9 +1226,12 @@ var dog = {
             var myvector = vector();
             myvector.append(7);
             myvector.store(1, 8);
-            log(myvector.get(1));
+            log(myvector.get(0)); //7
+            log(myvector.get(1)); //8
             
-            //36.1. and now the attack happens!
+            //36.1. shown to top JS programmers who could not see it. people who built the Array type in JS!!
+            // play with Array examples first: [17], [-1], ["buru"]. in ES6 we have HashMap but people still use Array because of its convenience
+            // and now the attack happens!
             var mystack;
             myvector.store('push', function(){
                 mystack = this;
@@ -1131,7 +1246,7 @@ var dog = {
                         array[array.length] = v;
                     },
                     store: function(i, v) {
-                        array[+i] = v;
+                        array[+i] = v;  // forces conversion to a number, so 'push' will be turned to a NaN
                     },
                     get: function(i){
                         return array[+i];
@@ -1161,7 +1276,8 @@ var dog = {
             my_pubsub.subscribe(log2);
             my_pubsub.publish("It works!");
 
-            //37.1 hack the pubsub above!
+            //37.1 
+            // hack the pubsub above!
             var my_pubsub = pubsub();
             my_pubsub.subscribe();  //kaboom! - this is the hack, passing a undefined subscriber
             my_pubsub.subscribe(log);
@@ -1171,7 +1287,9 @@ var dog = {
             catch(exc){
                 log(exc);
             }
-            //37.2. fix the hack above
+
+            //37.2. 
+            // fix the hack above
             function pubsub2(){
                 var subscribersArr = [];
                 return {
@@ -1192,7 +1310,8 @@ var dog = {
             var my_pubsub = pubsub2();
             my_pubsub.publish = undefined;
 
-            //37.4. fix the hack above
+            //37.4. like the sealed keyword in C#
+            // fix the hack above
             function pubsub3(){
                 var subscribers = [];
                 return Object.freeze({  // with this nobody can assign the methods!
@@ -1220,7 +1339,7 @@ var dog = {
             my_pubsub.subscribe(function log2(message){console.log("log22", message);});
             my_pubsub.publish("kaboom!");
 
-            //37.6. fix the hack above!
+            //37.6. fix the hack above! - with forEach inside publish, not with usual for iteration!. added in ES5-2009
             function pubsub4(){
                 var subscribers = [];
                 return Object.freeze({  
@@ -1248,7 +1367,7 @@ var dog = {
             my_pubsub.subscribe(function (msg){this.length = 0; log('kakaboom3!', msg, this);}); 
             my_pubsub.subscribe(function log3(message){console.log("log33", message);});
             my_pubsub.subscribe(limit(function (){
-                my_pubsub.publish("out of order!"); // we subscribe with a publish!
+                my_pubsub.publish("out of order!"); // we subscribe with a publish! => DoS
             }, 2));
             my_pubsub.publish("kaboom3!");
 
