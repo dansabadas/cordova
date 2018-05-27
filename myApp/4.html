@@ -75,7 +75,8 @@
             console.log(name);
         });
 
-        ///////////// 3
+        //http://reactivex.io/learnrx/
+        ///////////// 3 also show polifill https://developer.mozilla.org/ro/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach added in ES5 2009
         var projection = function() {
             var newReleases = [
                 {
@@ -124,7 +125,7 @@
         }
 		log(projection());
 
-        // 4
+        // 4 we will override the map!! stupid but we do it anyway!
         Array.prototype.map = function(projectionFunction) {
             var results = [];
             this.forEach(function(itemInArray) {
@@ -142,7 +143,7 @@
 
         log(JSON.stringify([1,2,3].map(function(x) { return x + 1; })) === '[2,3,4]');
         
-        // 5
+        // 5 => much simpler as compared with 3. don't forget the ( parenthesis!!)
         var projection2 = function() {
             var newReleases = [
                 {
@@ -189,42 +190,47 @@
 
         // 6
     var filtering = function() {
-        var newReleases = [
-            {
-                "id": 70111470,
-                "title": "Die Hard",
-                "boxart": "http://cdn-0.nflximg.com/images/2891/DieHard.jpg",
-                "uri": "http://api.netflix.com/catalog/titles/movies/70111470",
-                "rating": 4.0,
-                "bookmark": []
-            },
-            {
-                "id": 654356453,
-                "title": "Bad Boys",
-                "boxart": "http://cdn-0.nflximg.com/images/2891/BadBoys.jpg",
-                "uri": "http://api.netflix.com/catalog/titles/movies/70111470",
-                "rating": 5.0,
-                "bookmark": [{ id: 432534, time: 65876586 }]
-            },
-            {
-                "id": 65432445,
-                "title": "The Chamber",
-                "boxart": "http://cdn-0.nflximg.com/images/2891/TheChamber.jpg",
-                "uri": "http://api.netflix.com/catalog/titles/movies/70111470",
-                "rating": 4.0,
-                "bookmark": []
-            },
-            {
-                "id": 675465,
-                "title": "Fracture",
-                "boxart": "http://cdn-0.nflximg.com/images/2891/Fracture.jpg",
-                "uri": "http://api.netflix.com/catalog/titles/movies/70111470",
-                "rating": 5.0,
-                "bookmark": [{ id: 432534, time: 65876586 }]
-            }
-        ],
-        videos = newReleases.filter(video => video.rating == 5);
-
+      var newReleases = [
+        {
+          "id": 70111470,
+          "title": "Die Hard",
+          "boxart": "http://cdn-0.nflximg.com/images/2891/DieHard.jpg",
+          "uri": "http://api.netflix.com/catalog/titles/movies/70111470",
+          "rating": 4.0,
+          "bookmark": []
+        },
+        {
+          "id": 654356453,
+          "title": "Bad Boys",
+          "boxart": "http://cdn-0.nflximg.com/images/2891/BadBoys.jpg",
+          "uri": "http://api.netflix.com/catalog/titles/movies/70111470",
+          "rating": 5.0,
+          "bookmark": [{ id: 432534, time: 65876586 }]
+        },
+        {
+          "id": 65432445,
+          "title": "The Chamber",
+          "boxart": "http://cdn-0.nflximg.com/images/2891/TheChamber.jpg",
+          "uri": "http://api.netflix.com/catalog/titles/movies/70111470",
+          "rating": 4.0,
+          "bookmark": []
+        },
+        {
+          "id": 675465,
+          "title": "Fracture",
+          "boxart": "http://cdn-0.nflximg.com/images/2891/Fracture.jpg",
+          "uri": "http://api.netflix.com/catalog/titles/movies/70111470",
+          "rating": 5.0,
+          "bookmark": [{ id: 432534, time: 65876586 }]
+        }
+      ],
+        videos = [];
+        //videos = newReleases.filter(video => video.rating == 5); // much more elegant
+      newReleases.forEach(video => {
+        if (video.rating === 5) {
+          videos.push(video);
+        }
+      });
         // ------------ INSERT CODE HERE! -----------------------------------
         // Use forEach function to accumulate every video with a rating of 5.0
         // ------------ INSERT CODE HERE! -----------------------------------
@@ -367,7 +373,8 @@
 		
         log(flatten());
 
-        // 10.
+        // 10. => we want to avoid the approach from 9. => create a concatAll! this does not exist anymore on ES5 array
+      // show the try-catch below! we need multi-doimensional arr for concatAll
         Array.prototype.concatAll = function() {
             var results = [];
             this.forEach(function(subArray) {
@@ -448,7 +455,8 @@
 
     log(11, mapAndConcatAll());
 
-    // 12.
+    // 12. the first big mental leap
+      // for this exercise we cannot use index like movieLists[0] movieLists[i] or any iteration
     var idTitleAndOneBoxArt = function() {
         var movieLists = [
                 {
