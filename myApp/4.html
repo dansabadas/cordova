@@ -455,7 +455,7 @@
 
     log(11, mapAndConcatAll());
 
-    // 12. the first big mental leap
+    // 12. the first big mental leap. show the commented example with [0] and demand to be completely async functional with 2 inner closures!
       // for this exercise we cannot use index like movieLists[0] movieLists[i] or any iteration
     var idTitleAndOneBoxArt = function() {
         var movieLists = [
@@ -556,10 +556,10 @@
 
     // 13.
     Array.prototype.concatMap = function(projectionFunctionThatReturnsArray) {
-	return this
-		.map((item) => projectionFunctionThatReturnsArray(item))		
-		.concatAll();// apply the concatAll function to flatten the two-dimensional array
-};
+	    return this
+		    .map((item) => projectionFunctionThatReturnsArray(item))		
+		    .concatAll();// apply the concatAll function to flatten the two-dimensional array
+    };
 
 
 	var spanishFrenchEnglishWords = [ ["cero","rien","zero"], ["uno","un","one"], ["dos","deux","two"] ];
@@ -571,7 +571,7 @@
 
 	log(13, JSON.stringify(allWords) === '["cero","rien","zero","uno","un","one","dos","deux","two"]');
 
-    // 14.
+    // 14. You can think of this pattern as the functional version of a nested forEach!
     var concatMap = function() {
         var movieLists = [
                 {
