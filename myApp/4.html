@@ -894,7 +894,7 @@
     };
 		log(20, concatMapReduceSmallestBoxart());
 
-        // 21. what is zip?
+        // 21. what is zip? this is the last function to be learned
         var zip = function() {
             var videos = [
                     {
@@ -1085,25 +1085,40 @@ var videosBookmarsCombineZip = function() {
 		];
 
 	//------------ COMPLETE THIS EXPRESSION --------------
-	return movieLists.
-            concatMap(movieList =>
-                movieList.videos
-                    .concatMap(video => 
-                        Array.zip(
-                            video.boxarts
-                                .reduce((ba1, ba2) => ba1.width * ba1.height > ba2.width * ba2.height ?  ba2 : ba1)
-                                .map(ba => ({url: ba.url})),
-                            video.interestingMoments
-                                .filter(im => im.type === "Middle")
-                                .map(im => ({id: video.id, title: video.title, time: im.time})),
-                            (boxart, interestingMoment) => Object.assign(interestingMoment, boxart))
-                    )
-            );
+	//return movieLists.
+ //           concatMap(movieList =>
+ //               movieList.videos
+ //                   .concatMap(video => 
+ //                       Array.zip(
+ //                           video.boxarts
+ //                               .reduce((ba1, ba2) => ba1.width * ba1.height > ba2.width * ba2.height ?  ba2 : ba1) // get the smallest? => reduce
+ //                               .map(ba => ({url: ba.url})),
+ //                           video.interestingMoments
+ //                               .filter(im => im.type === "Middle")
+ //                               .map(im => ({id: video.id, title: video.title, time: im.time})),
+ //                           (boxart, interestingMoment) => Object.assign(interestingMoment, boxart)
+ //                       )
+ //                   )
+ //     );
 
-}
+      return movieLists.
+        concatMap(movieList =>
+          movieList.videos
+            .concatMap(video =>
+              Array.zip(
+                video.boxarts
+                  .reduce((ba1, ba2) => ba1.width * ba1.height > ba2.width * ba2.height ? ba2 : ba1),
+                video.interestingMoments
+                  .filter(im => im.type === "Middle"),
+                (boxart, interestingMoment) => ({ id: video.id, title: video.title, time: interestingMoment.time, url: boxart.url })
+              )
+            )
+        );
+      }
+
 		log(24, idTitleMiddleInterestingSmallesBoxart());
 
-        // 25.
+        // 25. transform from 2 arrays into a tree object graph
         var sqlJoin = function() {
             var lists = [
                     {
@@ -1136,7 +1151,34 @@ var videosBookmarsCombineZip = function() {
                         "id": 654356453,
                         "title": "Bad Boys"
                     }
-                ];
+            ];
+          // should look like this
+            //{
+            //  "name": "New Releases",
+            //    "videos": [
+            //      {
+            //        "id": 65432445,
+            //        "title": "The Chamber"
+            //      },
+            //      {
+            //        "id": 675465,
+            //        "title": "Fracture"
+            //      }
+            //    ]
+            //},
+            //{
+            //  "name": "Thrillers",
+            //    "videos": [
+            //      {
+            //        "id": 70111470,
+            //        "title": "Die Hard"
+            //      },
+            //      {
+            //        "id": 654356453,
+            //        "title": "Bad Boys"
+            //      }
+            //    ]
+            //}
 
             return lists.map(list =>
                 ({
@@ -1152,7 +1194,7 @@ var videosBookmarsCombineZip = function() {
         };
 		log(25, sqlJoin());
 
-        //26.
+        //26. again we go from relational structure of 4 arrays to a graph!
         var deeperTrees = function() {
 	var lists = [
 			{
@@ -1203,6 +1245,43 @@ var videosBookmarsCombineZip = function() {
 			{ videoId: 70111470, time: 645243 },
 			{ videoId: 654356453, time: 984934 }
 		];
+      // should be like this!!
+      //[
+      //  {
+      //    "name": "New Releases",
+      //    "videos": [
+      //      {
+      //        "id": 65432445,
+      //        "title": "The Chamber",
+      //        "time": 32432,
+      //        "boxart": "http://cdn-0.nflximg.com/images/2891/TheChamber130.jpg"
+      //      },
+      //      {
+      //        "id": 675465,
+      //        "title": "Fracture",
+      //        "time": 3534543,
+      //        "boxart": "http://cdn-0.nflximg.com/images/2891/Fracture120.jpg"
+      //      }
+      //    ]
+      //  },
+      //  {
+      //    "name": "Thrillers",
+      //    "videos": [
+      //      {
+      //        "id": 70111470,
+      //        "title": "Die Hard",
+      //        "time": 645243,
+      //        "boxart": "http://cdn-0.nflximg.com/images/2891/DieHard150.jpg"
+      //      },
+      //      {
+      //        "id": 654356453,
+      //        "title": "Bad Boys",
+      //        "time": 984934,
+      //        "boxart": "http://cdn-0.nflximg.com/images/2891/BadBoys140.jpg"
+      //      }
+      //    ]
+      //  }
+      //]
 
         return lists
             .map(
@@ -1319,7 +1398,7 @@ var videosBookmarsCombineZip = function() {
             });
     };
 
-//we can safely ignore the fololowing 2-3-4 examples for the presentation
+//we can safely ignore the folowing 2-3-4 examples for the presentation
     var observableDrags = function(){
         var drags = element.mouseDowns
             .map(mouseDown => 
