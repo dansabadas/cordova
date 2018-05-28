@@ -654,10 +654,20 @@
     };
 	log(14, concatMap());
 
-    [1,2,3].reduce(function(accumulatedValue, currentValue) { return accumulatedValue + currentValue; }); //=== [6];
-    [1,2,3].reduce(function(accumulatedValue, currentValue) { return accumulatedValue + currentValue; }, 10); //=== [16];
 
-    //15.
+
+      //15. before this example, present the reduce paradigm as below with the commented code samples
+      //Reduce reduces an array with many items into a one with a single value (so a single value within a single array)
+      // for reduce we need to look at at least 2 items at a time to do some aggregation, or some other operation
+    // [1,2,3].reduce((acc, curr)=> acc + curr) -> [6] so we can chain [6].Map...filter
+      //log([1,2,3].reduce((acc, curr)=> acc + curr))
+      //log([].reduce((acc, curr) => acc + curr))    // error!
+      // as we redefine the reduce, we will return an array with a single element from any not-empty array
+      // and empty array will reduce to another empty array this is good for observables {1,....2,.....3}.reduce((acc, curr) => acc + curr))  => {..........6}
+      [1, 2, 3].reduce(function (accumulatedValue, currentValue) { return accumulatedValue + currentValue; }); //=== [6];
+      [1, 2, 3].reduce(function (accumulatedValue, currentValue) { return accumulatedValue + currentValue; }, 10); //=== [16];
+
+      // this was already fixed - this process is called a reduction
     var forEachFind = function() {
         var boxarts = [
                 { width: 200, height: 200, url: "http://cdn-0.nflximg.com/images/2891/Fracture200.jpg" },
@@ -743,7 +753,9 @@
             .map(x => x.url);   // Complete this expression
     };
 
-    // 19.
+      log(18, largestBoxartUrlWithMapReduce());
+
+    // 19. we aggregate an array into one big object, one big accumulated map!
     var accumulatedMap = function() {
         var videos = [
             {
@@ -774,7 +786,7 @@
         //	 }
         // ]
         return videos.
-            reduce(function(accumulatedMap, video) {
+            reduce((accumulatedMap, video) => {
                 var obj = {};
 
                 // ----- INSERT CODE TO ADD THE VIDEO TITLE TO THE ----
@@ -784,11 +796,19 @@
                 // the object listed in its second argument (obj) and assigns them
                 // to the object listed in its first argument (accumulatedMap).
                 obj[video.id] = video.title;
-                return Object.assign(accumulatedMap, obj);  // .assign is ES6 specific! use Object.create approach instead, if no ES6 support
+                return Object.assign(accumulatedMap, obj);  // .assign is ES6 specific! use Object.create(accumulatedMap) (which creates a clone approach instead, if no ES6 support
             },
             // Use an empty map as the initial value instead of the first item in
             // the list.
-            {});
+          {});
+
+      // !! we don't use this example commented below because we mutate the accumulatedMap and we do not want to do that!!!!!
+        //return videos.
+        //  reduce((accumulatedMap, video) => {
+        //    accumulatedMap[video.id] = video.title;
+        //    return accumulatedMap;  
+        //  },
+        //  {});
     };
     log(19, accumulatedMap());
 
@@ -874,7 +894,7 @@
     };
 		log(20, concatMapReduceSmallestBoxart());
 
-        // 21.
+        // 21. what is zip?
         var zip = function() {
             var videos = [
                     {
@@ -927,7 +947,7 @@
 
         log(21, zip());
 
-        //22.
+        //22. make it like a static function C#/Java like static meaning
  
     Array.zip = function(left, right, combinerFunction) {
         var counter,
@@ -1209,7 +1229,7 @@ var videosBookmarsCombineZip = function() {
             ); // complete this expression
 };
     log(26, deeperTrees());
-
+/////////////////////////////////////////////////////////////////////////////////////// here it ends!!
     //27.
     var nasdaqPricesObservable = function(pricesNASDAQ, printRecord) {
         var microsoftPrices,
