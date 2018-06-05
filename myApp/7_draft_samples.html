@@ -3,8 +3,1068 @@
         <button id="btn1">Hello</button>
         <script>
             var log = console.log;
+            log('test');
             
+            var i1 = 0;
+            log(0.1+0.2);
+            var i1 = null;
+            i1 = undefined;
+            log(1==1);
+            log(1===1);
+            log(1=="1");
+            log(String(1)==parseInt("1"));
+             function myFunc1() {
+                 return { 
+                     a: 1, 
+                     b: 2 
+                };
+             }
+
+             log(myFunc1());
+
+             function myFunc2(i) {
+              if (i % 2 === 0) {
+                var j1 = 2;
+                let j11 = 4;
+              } else {
+                var j2 = 3;
+              }
+              log(j1, j2);
+            }
+
+            myFunc2(2);
+            myFunc2(3);
+
+            function green(){
+                let a = 2;
+                return function yellow(){
+                        var b = 1;
+                        a += 1;
+                    return a + b;
+                }
+            }
+
+            var yell = green();
+            log(yell(), yell(), yell());
+
+            var digit_name = (function(){
+                var names = ['zero', 'one', 'two'];
+
+                return function(n){
+                    return names[n];
+                }
+            }());
+            log(digit_name(1));
+            log(digit_name(2));
+
+            var dog = {
+                name1: 'azorel',
+                speak: function(words){
+                    return this.name1 + ' barks ' + words;
+                }
+            };
+
+            log(dog.speak("something"));
+
+            var speak = dog.speak;
+            log(speak("something"));
+
+            function Animal(){
+                this.toString = function() {
+                    return "Animal " + this.id;
+                }
+            }
+
+            var animal1 = new Animal();
+            var animal2 = Animal();
+            log(animal1);
+            log(animal2);
+
+            function Dog(id){
+                this.id = id;
+            }
+            log(new Dog(3));
+            log(animal1.toString());
+            log(new Dog(3).toString());
+
+            Dog.prototype = new Animal();
+            log(new Dog(3).toString());
+
+            function Cat(id){
+                this.id = id;
+                this.makeSound = function(){
+                    log('miau ' + this.id);
+                }
+            }
+
+            var cat = new Cat(3);
+            cat.makeSound();
+
+            var doggie4 = new Dog(4);
+            var dogSoundF = cat.makeSound.bind(doggie4);
+            dogSoundF();
+            cat.makeSound();
+            dogSoundF();
+
+            function makeAnimal(){
+                return {
+                    toString: function(){
+                        return "Animal " + this.id;
+                    }
+                };
+            }
+
+            function makeDog(id){
+                var animal = makeAnimal();
+                animal.id = id;
+
+                return animal;
+            }
+
+            var dog1 = makeDog(1);
+            log(dog1);
+
+            //1
+            function funky(o) {
+                o = null;
+            }
+
+            var x = [];
+
+            funky(x);
+            log(x); 
+            //a. throw exception b. =null c. =[]
+
+//2
+            function swap(a, b){
+                var temp = a;
+                a = b;
+                b = temp;
+            }
+
+            var x = 1, y = 2;
+            swap(x, y);
+            log(x); 
+            //a. 1 b.2 c.undefined d. throw exc 
             
+            //3
+            function add(a, b){
+                return a+b;
+            }
+            function sub(a, b){
+                return a-b;
+            }
+            function mul(a, b){
+                return a*b;
+            }
+            log(add(3,4));
+            log(sub(3,4));
+            log(mul(3,4));
+
+            //4.
+            // write a func identityf that 
+            //takes an argument
+            // and returns a function that 
+            //returns that argument
+            function identityf(o){
+                return function(){
+                    return o;
+                }
+            }
+            var three = identityf(3);
+            log(three()); // 3
+
+            //5.
+            // write a function addf 
+            // that adds from two invocations 
+            function addf(a){
+                return function(b){
+                  return add(a, b);
+                  // or return a + b
+                }
+            }
+            log(addf(3)(4));  // 7
+
+            //6
+            //// write a function liftf that takes 
+            //a binary function and makes it callable 
+            // with two invocations
+            function liftf(f){
+                 return function(a1){
+                    return function(b1){
+                        return f(a1, b1);
+                    };
+                };
+            }
+
+            var addf1 = liftf(add);
+            log(addf1(3)(4)); // 7
+            log(liftf(mul)(5)(6));  // 30
+
+            //7
+            // write a function curry that takes 
+            // two arguments: a binary function and a 'regular' argument,
+            // and returns a function that can take a second argument 
+            // (and that invokes the binary function)
+            function curry(f, a) {
+              //return liftf(f, a);
+                return function(b){
+                  return f(a, b);
+                }
+            }
+            var add3 = curry(add, 3);
+            log(add3(4));   // 7
+            log(curry(mul, 5)(6));  //30
+
+            //8
+            //  write increment function using existing functions
+            // do not create any new function but use the existing functions
+            var inc = addf(1);
+            // var inc2 = liftf(add)(1);
+            // var inc3 = curry(add, 1);
+
+            log(inc(5));  // 6
+            log(inc(5)); // 6
+
+            //9 write a function called twice
+            // that takes a binary func and return an unary func 
+            //that passes its argument to the binary function twice
+            function twice(binaryFunc){
+                return function(b){
+                    return binaryFunc(b, b);
+                }
+            }
+            var doubl = twice(add);
+            log(doubl(11)); //22
+            var square = twice(mul);
+            log(square(11));    //121
+            //10
+            // write reverse, a func which reverses 
+            //the arguments of a binary function
+            function reverse(binary){
+                return function(a, b){
+                    return binary(b, a);
+                }
+            }
+            var bus = reverse(sub);
+            log(bus(3,2));//-1
+            //11
+            // write a func composeu that takes two unary functions 
+            // and returns a unary func that calls them both (composing them)
+            function composeu(unaryFunc1, unaryFunc2){
+                return function(a){
+                    return unaryFunc2(unaryFunc1(a));
+                }
+            }
+            log(composeu(doubl, square)(5));  // 100
+
+            //12. write a func composeb that takes two binary funcs 
+            // and returns a func that calls them both (composing them)
+            function composeb(bf1, bf2){
+                return function(a, b, c){
+                    return bf2(bf1(a,b), c);
+                }
+            }
+            log(composeb(add, mul)(2, 3, 7)); //35
+
+            //13.  write a limit func that allows a binary func to be called 
+            // a limited number of times
+            function limit(bf1, l) {
+                
+                return function (a, b) {
+                    if(l >= 1){
+                        l -= 1; //++ -- 
+                        return bf1(a,b);
+                    }
+
+                    return undefined;
+                }
+            }
+
+            var add_ltd = limit(add, 1);
+            log(add_ltd(3, 4)); // 7
+            log(add_ltd(3, 4)); // undefined
+            var mul_ltd = limit(mul, 2);
+            log(mul_ltd(3, 4)); //12
+            log(mul_ltd(3, 4)); //12
+            log(mul_ltd(3, 4)); //undefined
+
+            //14. write a 'from' func that produces a generator that will produce 
+			// a series of values
+            function from(seed){
+                return function(){
+                    return seed++;
+                }
+            } 
+
+            var index = from(0);
+            log(index()); // 1
+            log(index()); // 2
+            log(index()); // 3
+
+            //15. write a 'to' func which takes a generator (see pb. above) 
+            // and an end val and returns a generator that will produce numbers up to that limit
+            function to(generator, endVal){
+                return function(){
+                    var nextVal = generator();
+                    if(nextVal < endVal){
+                        return nextVal;
+                    }
+                }
+            } 
+
+            var index = to(from(1), 3);
+            log(index()); //1
+            log(index()); //2
+            log(index()); //undefined
+
+            //16. write a 'fromTo' that produces a generator that 
+            //will produce values in a range
+            function fromTo(startVal, endVal){
+                return to(from(startVal), endVal);
+            }
+            var index = fromTo(0, 3);
+            log(index()); //0
+            log(index()); //1
+            log(index()); //2
+            log(index()); //undefined
+
+            //17
+			// write an 'element' func that takes an array and a generator 
+            //and returns a generator that will produce elements from the array
+            function element(arr, generatorFunc){
+                return function(){
+                    var nextVal = generatorFunc();
+                    if(nextVal !== undefined){
+                        return arr[nextVal];
+                    }
+                }
+            }
+            var ele = element(['a', 'b', 'c', 'd'], fromTo(1, 3));
+            log(ele()); //b
+            log(ele()); //c
+            log(ele()); //undefined
+
+            //18. modify the 'element' function so that the generator argument is optional. 
+            // If generator not provided => then each element of the array will be provided
+            function element(arr, generatorFunc){
+              var generator = generatorFunc !== undefined 
+                ? generatorFunc 
+                : fromTo(0, arr.length);
+               return function(){
+                    var nextVal = generator();
+                    if(nextVal !== undefined){
+                        return arr[nextVal];
+                    }
+                }
+            }
+            var ele = element(['a', 'b', 'c', 'd']);
+            log(ele());//a
+            log(ele());//b
+            log(ele());//c
+            log(ele());//d
+            log(ele());//undef
+
+            //19. write a 'collect' func that takes a generator 
+            //and an array and produces a function  
+            // that will collect the results
+            //  (made internally by the generator at every invocation of collect) 
+            // in the array
+
+            var array = [],
+                col = collect(fromTo(0, 2), array);
+
+                function collect(generator, arr){
+                    return function(){
+                        var res = generator();
+                        if(res !== undefined)
+                        {
+                            arr.push(res);
+                        }
+
+                        return res;
+                    }
+            }
+            log(col()); //0
+            log(col()); //1
+            log(col()); //undef
+            log(array); //[0,1]
+
+            // 20. write a filter func that takes a generator and a predicate 
+            // and produces a generator that produces only the values 
+            // approved by the predicate
+
+			// function filter(generator, predicate){
+            //     return function(){ 
+            //         var value;
+            //         do {
+            //             value = generator();
+            //         } while(value !== undefined && !predicate(value));
+            //         return value;
+            //     }
+            // }
+            
+            function filter(generator, predicate) {
+             return function recur() {
+               var value = generator();
+               if (value == undefined || predicate(value)) {
+                 return value;
+               }
+               return recur();
+             }
+            }
+
+			var fil = filter(fromTo(0, 5), function third(value){
+                return value % 3 === 0;
+            });
+            log(fil()); // 0
+            log(fil()); // 3
+            log(fil()); // undefined
+
+            //21. write a 'concat' function which takes 2 generators 
+            //and produces a generator that combines the sequences
+            function concat(gen1, gen2){
+                var gen = gen1;
+                return function(){
+                    var value = gen();
+                    if (value !== undefined){
+                        return value;
+                    }
+                    gen = gen2;
+                    return gen();
+                }
+            }
+
+            var con = concat(fromTo(0, 3), fromTo(0, 2));
+            log(con()); //0
+            log(con()); //1
+            log(con()); //2
+            log(con()); //0
+            log(con()); //1
+            log(con()); //undef
+
+            //22. make a function 'gensymf' that makes a function 
+            //that generates unique symbols
+            function gensymf(symbol){
+                var i = 0;
+                return function(){
+                    i += 1;
+                    return symbol + i;
+                }
+            }
+            var geng = gensymf("G");  // these are prefixes (G series and H series)
+            var genh = gensymf("H");
+
+            log(geng());//G1
+            log(genh());//H1
+            log(geng());//G2
+            log(genh());//H2
+			
+            //23. make a fibonaccif that returns a generator function 
+            //that will return the next fibonacci number
+            // function fibonaccif(i1, i2){
+            //     var i = -1, next;               
+            //     return function(){
+            //         i += 1;
+            //         if(i === 0){
+            //             return i1;
+            //         }
+            //         else if (i === 1){
+            //             return i2;
+            //         }
+                    
+            //         next = i1 + i2;
+            //         i1 = i2;
+            //         i2 = next;
+            //         return next;
+            //     }
+            // }
+            function fibonaccif(i1, i2){
+                return function(){
+                    var next = i1;
+                    i1 = i2;
+                    i2 += next;
+                    return next;
+                }
+            }
+            var fib = fibonaccif(0, 1);
+            log(fib());//0
+            log(fib());//1
+            log(fib());//1
+            log(fib());//2
+            log(fib());//3
+            log(fib());//5
+
+// 24. write a counter function that returns an object containing 
+// 2 functions that implement 
+// an up/down counter, hiding the counter
+            function counter(seed) {
+                return {
+                    up: function() {
+                        seed += 1;
+                        return seed;
+                    },
+                    down: function() {
+                        seed -= 1;
+                        return seed;
+                    }
+                };
+            }
+            var object = counter(10),
+                up = object.up,
+                down = object.down;
+            log(up());  //11
+            log(down());//10
+            log(down());//9
+            log(up());  //10
+
+// 25. make a revocable function that takes a binary function 
+//and returns an object containing 
+// an invoke function that can invoke the binary function and 
+// a revoke function that disables the invoke function
+            function revocable(binaryF){
+                return {
+                  invoke: function (a, b) {
+                    return binaryF === undefined 
+                        ? undefined 
+                        : binaryF(a, b);
+                  },
+                  revoke: function () {
+                    binaryF = undefined;
+                  }
+                }
+                //var isRevoked = false;
+                //return {
+                //  invoke: function (a, b) {
+                //    if (!isRevoked) {
+                //      return binaryF(a, b);
+                //    }
+                //  },
+                //  revoke: function () {
+                //    isRevoked = true;
+                //  }
+                //};
+            }
+
+            var rev = revocable(add);
+            add_rev = rev.invoke;
+            log(add_rev(3, 4)); //7
+            rev.revoke();
+            log(add_rev(3, 4)); // undefined
+			
+            //26.
+			// write a function 'm' that takes a value 
+			//and an optional source string and returns them in an object
+            function m(value, source){
+                return {
+                    "value": value,
+                    "source": typeof source === "string" ? source : String(value)
+                };
+            }
+            log(JSON.stringify(m(1)));// {"value":1,"source":"1"}
+            log(JSON.stringify(m(Math.PI, "pi")));//{"value":3.141592653589793,"source":"pi"}
+
+            //27. write a func 'addm' that takes two m objects 
+            //and returns an m object 
+            //(m have 2 properties. one is mandatory 'value' 
+            // and the other is optional: 'source')
+            function addm(m1, m2){
+                return m(
+                    m1.value + m2.value,
+                    "("+m1.source+"+"+m2.source+")"
+                );
+            }
+			log(JSON.stringify(addm(m(1), m(3))));  
+            //{"value":4,"source":"(1+3)"}
+            log(JSON.stringify(addm(m(1), m(Math.PI, "pi"))));  
+            //{"value":4.141592653589793,"source":"(1+pi)"}
+
+            //28. write a function 'liftm' that takes a binary function 
+            // and a string 
+			// and returns a function that acts on m objects
+            function liftm(binary, sign){
+                return function(m1, m2){
+                    return m(
+                        binary(m1.value, m2.value),
+                        "("+m1.source+sign+m2.source+")"
+                    );
+                }
+            }
+
+            var addm = liftm(add, "+");
+            log(JSON.stringify(addm(m(1), m(3))));  
+            //{"value":4,"source":"(1+3)"}
+            log(JSON.stringify(liftm(mul, "*")(m(4), m(3)))); 
+            //{"value":12,"source":"(4*3)"
+
+            //29. 
+            // modify liftm so that the functions it produces 
+            //can accept arguments that are either numbers or m objects
+            function liftm(binary, sign){
+                return function(a, b){
+                    if(typeof a === 'number') {
+                        a = m(a);
+                    }
+                    if(typeof b === 'number') {
+                        b = m(b);
+                    }
+                    
+                    return m(
+                        binary(a.value, b.value), 
+                        "("+a.source+sign+b.source+")"
+                    );
+                }
+            }
+            var addm = liftm(add, "+");
+            log(JSON.stringify(addm(1, 3)));
+            //{"value":4,"source":"(1+3)"}
+
+            // 30. write a function 'exp' that 
+            // evaluates simple array expressions.
+            // function exp(arr){
+            //     if(typeof arr === 'number'){
+            //         return arr;
+            //     }
+            //     var binaryF = arr.shift();
+            //     return binaryF(arr.shift(), arr.shift());
+            // }
+
+            function exp(value){
+               return Array.isArray(value)
+                ? value[0](value[1], value[2])
+                : value;
+            }
+
+            var sae = [mul, 5, 11];
+            log(exp(sae));  // 55
+            log(exp(42));   //42
+
+            //31. Modify exp to evaluate nested array expressions
+            function exp(value){
+                if(!Array.isArray(value)) return value;
+                var val1 = Array.isArray(value[1]) ? exp(value[1]) : value[1],
+                    val2 = Array.isArray(value[2]) ? exp(value[2]) : value[2];
+                return value.length === 3
+                    ? value[0](val1, val2)
+                    : value[0](val1);
+            }
+
+            function exp(value){
+                if(!Array.isArray(value)) return value;
+                return value[0](exp(value[1]), exp(value[2]));
+            }
+
+            var nae = [
+                Math.sqrt,
+                [
+                    add,
+                    [square, 3],
+                    [square, 4]
+                ]
+            ];
+            log(exp(nae));  // 5
+
+            //32. write a function 'addg' which adds from many invocations 
+            // until it sees an empty invocation 
+            function addg(first){
+                function more(next){
+                    if(next === undefined){
+                        return first;
+                    }
+
+                    first += next;
+                    return more;
+                }
+
+                if(first !== undefined){
+                    return more;
+                }
+            }
+            //var ss = addg(2)(7); var ss1 = ss(4);
+            log(addg());            //undefined
+            log(addg(2)());         //2
+            log(addg(2)(7)());      //9
+            log(addg(3)(0)(4)());   //7
+            log(addg(1)(2)(4)(8)());//15
+
+            //33. 
+            // write a func 'liftg' that will take a binary function 
+            // and apply it to many invocations
+            function liftg(binaryF){
+                return function(first){
+                    if(first === undefined){
+                        return undefined;
+                    }
+                    return function more(next){
+                        if(next === undefined){
+                            return first;
+                        }
+                        first = binaryF(first, next);
+                        return more;
+                    }
+                }
+            }
+
+            log(liftg(mul)());              //undefined
+            log(liftg(mul)(3)());           //3
+            log(liftg(mul)(1)(0)(4)(8)());  //0
+            log(liftg(mul)(1)(2)(4)(8)());  //64
+
+            //34.  write a function 'arrayg' that will build 
+            // an array from many invocations
+			function arrayg(first){
+                var returnArr = [];             
+                function more(next){
+                    if(next === undefined){
+                        return returnArr;
+                    }
+                    returnArr.push(next);
+                    return more;
+                }
+
+                return more(first);
+            }
+            //function arrayg(first) {
+            //  if (first === undefined) {
+            //    return [];
+            //  }
+            //  return liftg(
+            //    function (array, value) {
+            //      array.push(value);
+            //      return array;
+            //    })([first]);
+            //}
+
+			log(arrayg());           //[]
+            log(arrayg(3)());        //[3]
+            log(arrayg(3)(4)(5)());  //[3,4,5]
+
+            //35. 
+            // make a 'continuize' function that takes a unary function 
+            //and returns
+            // a function that takes 2 arguments, a callback and an argument
+            function continuize(unaryF){
+                return function(callback, arg){
+                    return callback(unaryF(arg));
+                }
+            }
+            sqrtc = continuize(Math.sqrt);
+            sqrtc(log, 81); //prints 9
+
+// return {
+//                     append: function(i){
+//                         array.push(i);
+//                     },
+//                     store: function(i, v) {
+//                         array[i] = v;
+//                     },
+//                     get: function(i){
+//                         return array[i];
+//                     }
+//                 };
+
+            function vector(){  // this first attempt still can be attacked
+                var array = [];
+                return {
+                    append: function(v){
+                        array[array.length] = v;
+                    },
+                    store: function(i, v){
+                        array[+i] = v;
+                    },
+                    get: function(i){
+                        return array[+i];
+                    }
+                }
+            }
+
+            var myvector = vector();
+            myvector.append(7);
+            myvector.store(1, 8);
+            myvector.store(10, 8);
+            log(myvector.get(0)); //7
+            log(myvector.get(1)); //8
+
+            var arr2 = [1,2,3];
+            arr2[17] = 42;
+            log(arr2);
+            delete arr2[2];
+            log(arr2);
+            arr2[-1] = 17;
+            arr2["buru"] = 50;
+            
+            var myhack;
+            myvector.store('push', function(){
+                myhack = this;
+            });
+            myvector.append(2);
+            log("myhack=", myhack);
+
+            function pubsub(){
+                // var subscribersArr = [];
+                // return Object.freeze({
+                //     subscribe: function(subscriberFunc){
+                //         subscribersArr[subscribersArr.length] = subscriberFunc;
+                //     },
+                //     publish: function(event){
+                //         var i, length = subscribersArr.length;
+                //         // for(i = 0; i < length; i+= 1)
+                //         // {
+                //         //     try{
+                //         //         subscribersArr[i](event); 
+                //         //     } catch(ignore) {}
+                //         // }
+                //         subscribersArr.forEach(function (s){// adding for-each we don't keep the 'this' context
+                //             setTimeout(function(){
+                //                     s(event);
+                //                 }, 0);  
+                //         });
+                //     }
+                // });
+                var subscribers = [];
+                return Object.freeze({  
+                    subscribe: function(subscriberFunc) {
+                        subscribers[subscribers.length] = subscriberFunc;
+                    },
+                    publish: function(event){
+                        subscribers.forEach(function (s){// adding for-each we don't keep the 'this' context
+                            setTimeout(function(){
+                                s(event);
+                            }, 0); 
+                        });
+                    }
+                });
+            }
+
+            // var my_pubsub = pubsub();
+
+            // my_pubsub.subscribe(log);
+            // my_pubsub.subscribe();
+            // my_pubsub.subscribe(function (){this.length = 0;}); 
+            // my_pubsub.subscribe(function log2(message){console.log("log2", message);});
+            // my_pubsub.publish("It works!");
+            // my_pubsub.publish = undefined;
+            // my_pubsub.subscribe(limit(function (){
+            //     my_pubsub.publish("out of order!"); // we subscribe with a publish! => DoS
+            // }, 2));
+            // my_pubsub.publish("It works!");
+
+             var iteration01 =  function(console) {
+                var names = ["Ben", "Jafar", "Matt", "Priya", "Brian"],
+                    counter;
+
+                for(counter = 0; counter < names.length; counter++) {
+                    log(names[counter]);
+                }
+            }
+
+            iteration01();
+
+           var forEach02 = function(console) {
+                var names = ["Ben", "Jafar", "Matt", "Priya", "Brian"];
+
+                names.forEach(function(name) {
+                    log(name);
+                });
+            }
+    forEach02();
+    var projection = function() {
+            var newReleases = [
+                {
+                    "id": 70111470,
+                    "title": "Die Hard",
+                    "boxart": "http://cdn-0.nflximg.com/images/2891/DieHard.jpg",
+                    "uri": "http://api.netflix.com/catalog/titles/movies/70111470",
+                    "rating": [4.0],
+                    "bookmark": []
+                },
+                {
+                    "id": 654356453,
+                    "title": "Bad Boys",
+                    "boxart": "http://cdn-0.nflximg.com/images/2891/BadBoys.jpg",
+                    "uri": "http://api.netflix.com/catalog/titles/movies/70111470",
+                    "rating": [5.0],
+                    "bookmark": [{ id: 432534, time: 65876586 }]
+                },
+                {
+                    "id": 65432445,
+                    "title": "The Chamber",
+                    "boxart": "http://cdn-0.nflximg.com/images/2891/TheChamber.jpg",
+                    "uri": "http://api.netflix.com/catalog/titles/movies/70111470",
+                    "rating": [4.0],
+                    "bookmark": []
+                },
+                {
+                    "id": 675465,
+                    "title": "Fracture",
+                    "boxart": "http://cdn-0.nflximg.com/images/2891/Fracture.jpg",
+                    "uri": "http://api.netflix.com/catalog/titles/movies/70111470",
+                    "rating": [5.0],
+                    "bookmark": [{ id: 432534, time: 65876586 }]
+                }
+            ],
+            videoAndTitlePairs = [];
+
+            // ------------ INSERT CODE HERE! -----------------------------------
+            // Use forEach function to accumulate {id, title} pairs from each video.
+            // Put the results into the videoAndTitlePairs array using the Array's
+            // push() method. Example: videoAndTitlePairs.push(newItem);
+            // ------------ INSERT CODE HERE! -----------------------------------
+            newReleases.forEach(video => videoAndTitlePairs.push({id: video.id, title: video.title}));
+
+            return videoAndTitlePairs;
+        }
+		log(projection());
+
+        Array.prototype.map = function(projectionFunction) {
+            var results = [];
+            this.forEach(function(itemInArray) {
+
+                // ------------ INSERT CODE HERE! ----------------------------
+                // Apply the projectionFunction to each item in the array and add
+                // each result to the results array.
+                // Note: you can add items to an array with the push() method.
+                // ------------ INSERT CODE HERE! ----------------------------
+                results.push(projectionFunction(itemInArray));
+            });
+
+            return results;
+        };
+
+        log(JSON.stringify([1,2,3].map((x) =>  x + 1 )) === '[2,3,4]');
+
+var chaining = function() {
+        var newReleases = [
+            {
+                "id": 70111470,
+                "title": "Die Hard",
+                "boxart": "http://cdn-0.nflximg.com/images/2891/DieHard.jpg",
+                "uri": "http://api.netflix.com/catalog/titles/movies/70111470",
+                "rating": 4.0,
+                "bookmark": []
+            },
+            {
+                "id": 654356453,
+                "title": "Bad Boys",
+                "boxart": "http://cdn-0.nflximg.com/images/2891/BadBoys.jpg",
+                "uri": "http://api.netflix.com/catalog/titles/movies/70111470",
+                "rating": 5.0,
+                "bookmark": [{ id: 432534, time: 65876586 }]
+            },
+            {
+                "id": 65432445,
+                "title": "The Chamber",
+                "boxart": "http://cdn-0.nflximg.com/images/2891/TheChamber.jpg",
+                "uri": "http://api.netflix.com/catalog/titles/movies/70111470",
+                "rating": 4.0,
+                "bookmark": []
+            },
+            {
+                "id": 675465,
+                "title": "Fracture",
+                "boxart": "http://cdn-0.nflximg.com/images/2891/Fracture.jpg",
+                "uri": "http://api.netflix.com/catalog/titles/movies/70111470",
+                "rating": 5.0,
+                "bookmark": [{ id: 432534, time: 65876586 }]
+            }
+        ];
+
+        // ------------ INSERT CODE HERE! -----------------------------------
+        // Chain the filter and map functions to select the id of all videos
+        // with a rating of 5.0.
+        return newReleases
+            .filter(video => video.rating === 5)
+            .map(video => video.id) // Complete this expression
+        // ------------ INSERT CODE HERE! -----------------------------------
+    }
+
+    log(chaining());
+    Array.prototype.concatAll = function() {
+            var results = [];
+            this.forEach(function(subArray) {
+                // ------------ INSERT CODE HERE! ----------------------------
+                // Add all the items in each subArray to the results array.
+                // ------------ INSERT CODE HERE! ----------------------------
+                subArray.forEach((subArrayElement) => {
+                    results.push(subArrayElement);
+                });
+            });
+
+        return results;
+    };
+    var mapAndConcatAll =function() {
+        var movieLists = [
+                {
+                    name: "New Releases",
+                    videos: [
+                        {
+                            "id": 70111470,
+                            "title": "Die Hard",
+                            "boxart": "http://cdn-0.nflximg.com/images/2891/DieHard.jpg",
+                            "uri": "http://api.netflix.com/catalog/titles/movies/70111470",
+                            "rating": 4.0,
+                            "bookmark": []
+                        },
+                        {
+                            "id": 654356453,
+                            "title": "Bad Boys",
+                            "boxart": "http://cdn-0.nflximg.com/images/2891/BadBoys.jpg",
+                            "uri": "http://api.netflix.com/catalog/titles/movies/70111470",
+                            "rating": 5.0,
+                            "bookmark": [{ id: 432534, time: 65876586 }]
+                        }
+                    ]
+                },
+                {
+                    name: "Dramas",
+                    videos: [
+                        {
+                            "id": 65432445,
+                            "title": "The Chamber",
+                            "boxart": "http://cdn-0.nflximg.com/images/2891/TheChamber.jpg",
+                            "uri": "http://api.netflix.com/catalog/titles/movies/70111470",
+                            "rating": 4.0,
+                            "bookmark": []
+                        },
+                        {
+                            "id": 675465,
+                            "title": "Fracture",
+                            "boxart": "http://cdn-0.nflximg.com/images/2891/Fracture.jpg",
+                            "uri": "http://api.netflix.com/catalog/titles/movies/70111470",
+                            "rating": 5.0,
+                            "bookmark": [{ id: 432534, time: 65876586 }]
+                        }
+                    ]
+                }
+            ];
+
+        // ------------   INSERT CODE HERE!  -----------------------------------
+        // Use map and concatAll to flatten the movieLists in a list of video ids.
+        // ------------   INSERT CODE HERE!  -----------------------------------
+
+        return movieLists
+            .map(ml => ml.videos.map(video => video.id))
+            .concatAll(); // Complete this expression!
+    }
+
+    log(11, mapAndConcatAll());
+
+    Array.prototype.concatMap = function(projectionFunctionThatReturnsArray) {
+	return this.
+		map(function(item) {
+			// ------------   INSERT CODE HERE!  ----------------------------
+			// Apply the projection function to each item. The projection
+			// function will return a new child array. This will create a
+			// two-dimensional array.
+			// ------------   INSERT CODE HERE!  ----------------------------
+      return projectionFunctionThatReturnsArray(item)
+		}).
+		// apply the concatAll function to flatten the two-dimensional array
+		concatAll();
+};
+var result = 
+[1,2,3].reduce((acc, curr)=> acc + curr);
+log(result);
         </script>
     </body>
 </document>

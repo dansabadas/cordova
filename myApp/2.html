@@ -437,8 +437,9 @@
       //0.1. present the main types. How the Number type is got right except 0.1+0.2
       //0.1.1. null vs undefined
       //0.1.2. == vs ===. 1 == '1' String(1) parseInt("1")
-      //0.2. present function variable
-      //0.3. present hoisting. how is done
+        //0.2. present function variable
+        //0.3. the { notation convention because of stupid ; automatic insertion
+        //0.4. present hoisting. how is done
             function someFunction(i) {
               if (i % 2 === 0) {
                 var j1 = 2;
@@ -450,7 +451,7 @@
 
             someFunction(2);
             someFunction(3);
-      //0.4. the { notation convention because of stupid ; automatic insertion
+      
             //0.5. green-yell closure (named yellow is optional) - inner func survives somehow! 
       //      and has access to a which is no longer on stack? => put it on heap with great gabrage collector
       // because GC was not easily done with heap 40 years ago. Scheme did discover it first! => JS did it first to mainstream!, then Python/Ruby, C#, C++/PhP, Java, C# 7 vs C#2
@@ -659,7 +660,7 @@
             // write a function curry that takes two arguments: a binary function and a 'regular' argument,
             // and returns a function that can take a second argument (and that invokes the binary function)
             function curry(f, a) {
-              //return liftf(a);
+              //return liftf(f)(a);
                 return function(b){
                   return f(a, b);
                 }
@@ -1094,14 +1095,14 @@
 
             //31. there are 2 implementations below!. this time we can have 3 or 2 elements in the array
             // it resembles LISP!
-            // Modify exp to evaluate nested array expressions
+            //31. Modify exp to evaluate nested array expressions
             function exp(value){
                 if(!Array.isArray(value)) return value;
                 var val1 = Array.isArray(value[1]) ? exp(value[1]) : value[1],
                     val2 = Array.isArray(value[2]) ? exp(value[2]) : value[2];
-                return value.length === 3 
-                    ? value[0](val1, val2) 
-                    : value[0](val1)
+                return value.length === 3
+                    ? value[0](val1, val2)
+                    : value[0](val1);
             }
 
             function exp(value){
@@ -1264,9 +1265,11 @@
                         subscribersArr[subscribersArr.length] = subscriberFunc;
                     },
                     publish: function(event){
-                        subscribersArr.forEach(function(subscriber){
-                            subscriber(event);
-                        });
+                        var i, length = subscribersArr.length;
+                        for(i = 0; i < length; i+= 1)
+                        {
+                            subscribersArr[i](event); 
+                        }
                     }
                 };
             }
