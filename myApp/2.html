@@ -1055,7 +1055,6 @@
             // modify liftm so that the functions it produces can accept arguments that are either numbers or m objects
             function liftm(binary, sign){
                 return function(a, b){
-                    var value, source;
                     if(typeof a === 'number') {
                         a = m(a);
                     }
